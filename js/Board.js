@@ -31,6 +31,13 @@ class Board {
         return y * this.width + x;
     }
 
+    movePosition(move) {
+        return {
+            x: move % this.width,
+            y: Math.floor(move / this.width),
+        };
+    }
+
     print() {
         for (let y = 0; y < this.height; y++) {
             let str = '';
@@ -142,6 +149,6 @@ class Board {
 
 }
 
-if ( typeof module === "object" && typeof module.exports === "object" ) {
+if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = Board;
 }

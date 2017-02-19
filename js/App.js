@@ -93,9 +93,12 @@ class App {
     restart() {
         // let size = Number($('#size').val());
         // let winSize = Number($('#win-size').val());
-        // this.board = new Board(size, size, winSize);
-        // this.player = 1;
-        // this.moves = undefined;
+        this.board = new Board(10, 10, 4);
+        this.board.set(5,5, 1);
+        this.board.set(4,5, 2);
+        this.player = 1;
+        this.moves = undefined;
+        new BoardView('#board', this.board);
         //
         // let boardHtml = '';
         // for (let y = 0; y < this.board.height; y++) {

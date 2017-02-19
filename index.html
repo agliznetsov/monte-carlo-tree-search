@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Monte Carlo Tree Search Playground</title>
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="img/dice.png">
 </head>
 <body>
 
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
-            <div class="navbar-brand">Monte Carlo Tree Search Playground</div>
+            <div class="navbar-brand">
+                <img alt="Brand" src="img/dices50.png">Monte Carlo Tree Search Playground
+            </div>
         </div>
     </div>
 </nav>
@@ -20,22 +25,41 @@
 <div class="well well-sm">
     <div class="container toolbar">
         <div class="btn-group">
-            <button id="restart" class="btn btn-danger" title="Restart game"><i class="glyphicon glyphicon-off"></i></button>
-            <button id="help" class="btn bth-default" title="Find best move"><i class="glyphicon glyphicon-question-sign"></i></button>
-            <button id="stop" class="btn btn-default" title="Stop search"><i class="glyphicon glyphicon-stop"></i></button>
+            <button id="restart" class="btn btn-danger" title="Restart game"><i class="fa fa-repeat"></i></button>
+            <button id="help" class="btn bth-default" title="Find best move"><i class="fa fa-question-circle"></i></button>
+            <button id="stop" class="btn btn-default" title="Stop search"><i class="fa fa-stop-circle"></i></button>
         </div>
-        <div id="player">Player:</div>
-        <div>
-            <div>Iterations</div>
-            <div id="iterations"></div>
+        <div class="toolbar-item">
+            <label>Game</label>
+            <select class="form-control input-sm" id="game">
+                <option>6x6</option>
+                <option>10x10</option>
+            </select>
         </div>
-        <div id="moves-chart"></div>
+        <div class="toolbar-item">
+            <label>Exploration</label>
+            <div>
+                <input type="number" class="form-control input-sm" value="1.4"/>
+            </div>
+        </div>
+        <div style="flex: 1; display: flex; justify-content: flex-end; margin-right: 0;">
+            <div class="toolbar-item">
+                <label>Player</label>
+                <div id="player"><i class="fa fa-2x fa-close highlight"></i></div>
+            </div>
+            <div class="toolbar-item">
+                <label>Iterations</label>
+                <div class="value" id="iterations">0</div>
+            </div>
+            <div id="moves-chart"></div>
+        </div>
     </div>
 </div>
 
 
-<div class="content">
-    <div id="board"></div>
+<div class="board-parent">
+    <div id="board">
+    </div>
 </div>
 
 
@@ -45,6 +69,7 @@
 
 <script src="js/BarChart.js"></script>
 <script src="js/Board.js"></script>
+<script src="js/BoardView.js"></script>
 <script src="js/AI.js"></script>
 <script src="js/App.js"></script>
 

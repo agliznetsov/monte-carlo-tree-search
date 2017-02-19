@@ -1,23 +1,105 @@
+/*bootstrap*/
+
 .navbar {
     margin-bottom: 0;
-    border-radius: 0;
 }
 
-.well {
-    border-radius: 0;
-}
-
-.game {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.navbar-brand  {
+    padding: 0;
+    height: 60px;
+    font-size: 28px;
     display: flex;
-    flex-direction: row;
+    align-items: center;
 }
 
-.board {
+.navbar-brand > img {
+    margin-right: 10px;
+}
+
+.btn {
+    padding: 4px 8px;
+}
+
+select.input-sm, .input-sm {
+    padding: 1px 6px;
+    line-height: 1;
+    height: 30px;
+}
+
+/*toolbar*/
+
+.toolbar {
+    display: flex;
+    /*align-items: center;*/
+}
+
+.toolbar > .btn-group {
+    align-self: flex-end;
+    margin-bottom: 4px;
+    margin-right: 10px;
+}
+
+.toolbar-item {
+    margin-right: 10px;
+    width: 100px;
+}
+
+.value {
+    font-size: 18px;
+    height: 30px;
+    border-bottom: 1px solid gray;
+    text-align: end;
+}
+
+#moves-chart {
+    width: 240px;
+    height: 60px;
+    border: 1px solid gray;
+    display: flex;
+    align-items: flex-end;
+}
+
+#moves-chart div {
+    background-color: steelblue;
+    margin: 1px;
+    flex: 1;
+}
+
+/*board*/
+
+.highlight {
+    text-shadow: 4px 4px 8px #FF0000;
+}
+
+.board-parent {
+    display: flex;
+    justify-content: center;
+}
+
+#board {
     position: relative;
+}
+
+.grid-row {
+    position: absolute;
+    height: 30px;
+    border-bottom: 1px solid grey;
+}
+
+.grid-column {
+    position: absolute;
+    width: 30px;
+    border-right: 1px solid grey;
+}
+
+.cell {
+    position: absolute;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /*.win {*/
@@ -31,29 +113,4 @@
     /*stroke-width: 10px;*/
 /*}*/
 
-#moves-chart {
-    width: 300px;
-    height: 100px;
-    border: 1px solid gray;
-    display: flex;
-    align-items: flex-end;
-}
 
-#moves-chart div {
-    background-color: steelblue;
-    margin: 1px;
-    flex: 1;
-}
-
-.toolbar {
-    display: flex;
-    align-items: center;
-}
-
-.toolbar > * {
-    margin-right: 15px;
-}
-
-.value {
-    font-size: 24px;
-}

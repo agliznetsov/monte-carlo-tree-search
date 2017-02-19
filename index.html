@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monte Carlo Tree Search Playground</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <div class="navbar-brand">Monte Carlo Tree Search Playground</div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="well well-sm">
+    <div class="container toolbar">
+        <div class="btn-group">
+            <button id="restart" class="btn btn-danger" title="Restart game"><i class="glyphicon glyphicon-off"></i></button>
+            <button id="help" class="btn bth-default" title="Find best move"><i class="glyphicon glyphicon-question-sign"></i></button>
+            <button id="stop" class="btn btn-default" title="Stop search"><i class="glyphicon glyphicon-stop"></i></button>
+        </div>
+        <div id="player">Player:</div>
+        <div>
+            <div>Iterations</div>
+            <div id="iterations"></div>
+        </div>
+        <div id="moves-chart"></div>
+    </div>
+</div>
+
+
+<div class="content">
+    <div id="board"></div>
+</div>
+
+
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/lodash/lodash.min.js"></script>
+<script src="node_modules/d3/build/d3.min.js"></script>
+
+<script src="js/BarChart.js"></script>
+<script src="js/Board.js"></script>
+<script src="js/AI.js"></script>
+<script src="js/App.js"></script>
+
+</body>
+</html>

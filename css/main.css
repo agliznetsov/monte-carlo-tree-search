@@ -4,7 +4,7 @@
     margin-bottom: 0;
 }
 
-.navbar-brand  {
+.navbar-brand {
     padding: 0;
     height: 60px;
     font-size: 28px;
@@ -41,7 +41,14 @@ select.input-sm, .input-sm {
 
 .toolbar-item {
     margin-right: 10px;
-    width: 100px;
+    min-width: 100px;
+}
+
+.toolbar > .right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 0;
 }
 
 .value {
@@ -100,17 +107,11 @@ select.input-sm, .input-sm {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 24px;
 }
 
-/*.win {*/
-    /*position: absolute;*/
-    /*z-index: 2;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*width: 100%;*/
-    /*height: 100%;*/
-    /*stroke: rgba(0, 0, 0, 0.6);*/
-    /*stroke-width: 10px;*/
-/*}*/
+.cell.win {
+    text-shadow: 3px 3px 6px #FF0000;
+}
 
 

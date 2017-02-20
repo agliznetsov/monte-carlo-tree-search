@@ -20,21 +20,28 @@ class Board {
     }
 
     get(x, y) {
-        return this.cells[this.cellIndex(x, y)];
+        return this.cells[this.index(x, y)];
     }
 
     set(x, y, value) {
-        this.cells[this.cellIndex(x, y)] = value;
+        this.setIndex(this.index(x, y), value);
     }
 
-    cellIndex(x, y) {
+    setIndex(index, value) {
+        if (this.cells[index] && value) {
+            throw new Error('Cell (' + move + ') is already set');
+        }
+        this.cells[index] = value;
+    }
+
+    index(x, y) {
         return y * this.width + x;
     }
 
-    movePosition(move) {
+    cell(index) {
         return {
-            x: move % this.width,
-            y: Math.floor(move / this.width),
+            x: index % this.width,
+            y: Math.floor(index / this.width),
         };
     }
 
@@ -42,8 +49,8 @@ class Board {
         for (let y = 0; y < this.height; y++) {
             let str = '';
             for (let x = 0; x < this.width; x++) {
-                let cell = this.get(x, y);
-                str += cell ? (cell + ' ') : '. ';
+                let value = this.get(x, y);
+                str += value ? (value + ' ') : '. ';
             }
             console.log(str);
         }
@@ -60,30 +67,17 @@ class Board {
         return moves;
     }
 
-    makeMove(move, player) {
-        if (this.cells[move] && player) {
-            throw new Error('Cell (' + move + ') is busy');
-        }
-        this.cells[move] = player;
-
-    }
-
-    undoMove(move) {
-        this.makeMove(move, undefined);
-    }
-
-    findWinner(move) {
-        let y = Math.floor(move / this.width);
-        let x = move % this.width;
-        let win = this.checkCell(x, y, -1, 0, 1, 0);
+    findWinner(index) {
+        let c = this.cell(index);
+        let win = this.checkCell(c.x, c.y, -1, 0, 1, 0);
         if (!win) {
-            win = this.checkCell(x, y, 0, -1, 0, 1);
+            win = this.checkCell(c.x, c.y, 0, -1, 0, 1);
         }
         if (!win) {
-            win = this.checkCell(x, y, -1, 1, 1, -1);
+            win = this.checkCell(c.x, c.y, -1, 1, 1, -1);
         }
         if (!win) {
-            win = this.checkCell(x, y, -1, -1, 1, 1);
+            win = this.checkCell(c.x, c.y, -1, -1, 1, 1);
         }
         this.win = win;
         return win;
@@ -98,9 +92,11 @@ class Board {
         let i = 0;
         let tx = x;
         let ty = y;
+        let cells = {};
         while (tx >= 0 && tx < this.width && ty >= 0 && ty < this.height) {
             if (this.get(tx, ty) === player) {
                 length++;
+                cells[this.index(tx, ty)] = true;
             } else {
                 break;
             }
@@ -112,6 +108,7 @@ class Board {
         while (tx2 >= 0 && tx2 < this.width && ty2 >= 0 && ty2 < this.height) {
             if (this.get(tx2, ty2) === player) {
                 length++;
+                cells[this.index(tx2, ty2)] = true;
             } else {
                 break;
             }
@@ -121,9 +118,8 @@ class Board {
         if (length >= this.winSize) {
             return {
                 player: player,
-                start: {x: tx - dx1, y: ty - dy1},
-                end: {x: tx2 - dx2, y: ty2 - dy2}
-            }
+                cells: cells
+            };
         } else {
             return false;
         }
@@ -134,7 +130,7 @@ class Board {
         while (moves.length) {
             let moveIndex = Math.floor(Math.random() * moves.length);
             let move = moves[moveIndex];
-            this.makeMove(move, player);
+            this.setIndex(move, player);
             let win = this.findWinner(move);
             if (win) {
                 return win;

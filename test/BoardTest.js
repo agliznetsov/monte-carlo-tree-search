@@ -35,7 +35,7 @@ describe('Board', () => {
 
     it('findWinner empty', () => {
         let board = new Board(10, 10, 2);
-        board.makeMove(0, 1);
+        board.set(0, 0, 1);
         assert.equal(false, board.findWinner(0));
     });
 
@@ -43,20 +43,18 @@ describe('Board', () => {
         let board = new Board(10, 10, 2);
         board.set(1, 1, 1);
         board.set(2, 1, 1);
-        let res = board.findWinner(board.cellIndex(1, 1));
+        let res = board.findWinner(board.index(1, 1));
         assert.equal(1, res.player);
-        assert.deepEqual({x: 1, y: 1}, res.start);
-        assert.deepEqual({x: 2, y: 1}, res.end);
+        assert.deepEqual({ '11': true, '12': true }, res.cells);
     });
 
     it('findWinner col', () => {
         let board = new Board(10, 10, 2);
         board.set(1, 1, 1);
         board.set(1, 2, 1);
-        let res = board.findWinner(board.cellIndex(1, 1));
+        let res = board.findWinner(board.index(1, 1));
         assert.equal(1, res.player);
-        assert.deepEqual({x: 1, y: 1}, res.start);
-        assert.deepEqual({x: 1, y: 2}, res.end);
+        assert.deepEqual({ '11': true, '21': true }, res.cells);
     });
 
     it('findWinner diag', () => {
@@ -64,10 +62,9 @@ describe('Board', () => {
         board.set(0, 2, 1);
         board.set(1, 3, 1);
         board.set(2, 4, 1);
-        let res = board.findWinner(board.cellIndex(0, 2));
+        let res = board.findWinner(board.index(0, 2));
         assert.equal(1, res.player);
-        assert.deepEqual({x: 0, y: 2}, res.start);
-        assert.deepEqual({x: 2, y: 4}, res.end);
+        assert.deepEqual({ '20': true, '31': true, '42': true }, res.cells);
     });
 
 });

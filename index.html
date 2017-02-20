@@ -32,20 +32,20 @@
         <div class="toolbar-item">
             <label>Game</label>
             <select class="form-control input-sm" id="game">
-                <option>6x6</option>
-                <option>10x10</option>
+                <option value="t4">Tic Tac Toe 4</option>
+                <option value="t5">Tic Tac Toe 5</option>
             </select>
         </div>
         <div class="toolbar-item">
             <label>Exploration</label>
             <div>
-                <input type="number" class="form-control input-sm" value="1.4"/>
+                <input type="number" class="form-control input-sm" value="1.4" style="width: 100px"/>
             </div>
         </div>
-        <div style="flex: 1; display: flex; justify-content: flex-end; margin-right: 0;">
+        <div class="right">
             <div class="toolbar-item">
                 <label>Player</label>
-                <div id="player"><i class="fa fa-2x fa-close highlight"></i></div>
+                <div id="player"></div>
             </div>
             <div class="toolbar-item">
                 <label>Iterations</label>

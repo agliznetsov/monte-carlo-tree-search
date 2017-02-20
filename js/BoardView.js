@@ -1,17 +1,28 @@
 class BoardView {
-    constructor(selector, board) {
+    constructor(selector, board, boardClick) {
+        this.selector = selector;
         this.board = board;
+        this.boardClick = boardClick;
         this.cellSize = 30;
         this.width = board.width * this.cellSize;
         this.height = board.height * this.cellSize;
-        this.container = d3.select(selector);
-        this.container.selectAll("*").remove();
+        $(selector).click(this.onClick.bind(this));
         this.drawGrid();
         this.refresh();
     }
 
+    onClick(e) {
+        let parent = $(this.selector).offset();
+        let y = Math.floor((e.pageY - parent.top) / this.cellSize);
+        let x = Math.floor((e.pageX - parent.left) / this.cellSize);
+        this.boardClick(x, y)
+    }
+
     drawGrid() {
-        let grid = this.container.append("div")
+        let container = d3.select(this.selector);
+        container.selectAll("*").remove();
+
+        let grid = container.append("div")
             .style("width", this.width + "px")
             .style("height", this.height + "px");
 
@@ -31,24 +42,34 @@ class BoardView {
     }
 
     refresh() {
+        let container = d3.select(this.selector);
         let data = [];
         let that = this;
         _.forOwn(this.board.cells, function (value, key) {
             data.push({
-                pos: that.board.movePosition(key),
-                value: value
+                id: key,
+                cell: that.board.cell(key),
+                value: value,
+                win: that.board.win && that.board.win.cells[key]
             })
         });
-        this.container.selectAll(".cell").data(data).enter()
+
+        let cells = container.selectAll(".cell").data(data, (d) => d.id);
+
+        cells.enter()
 
             .append("div")
             .classed("cell", true)
-            .style('left', (d) => d.pos.x * this.cellSize + "px")
-            .style('top', (d) => d.pos.y * this.cellSize + "px")
+            .classed("win", (d) => d.win)
+            .style('left', (d) => (d.cell.x * this.cellSize) + "px")
+            .style('top', (d) => (d.cell.y * this.cellSize) + "px")
 
             .append("i")
-            .attr("class", "fa fa-lg")
+            .attr("class", "fa")
             .classed("fa-close", (d) => d.value == 1)
             .classed("fa-circle-o", (d) => d.value == 2);
+
+        container.selectAll(".cell").data(data).merge(cells).classed("win", (d) => d.win)
+
     }
 }

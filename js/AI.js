@@ -17,12 +17,18 @@ class AI {
         // console.log('# cycle/sec: ', Math.round(1000 * this.node.playCount / (end - start)));
     }
 
-    getMoves() {
-        let moves = _.map(this.node.children, (it) => {
+    getResult() {
+        let res = {};
+        res.moves = _.map(this.node.children, (it) => {
             return {move: it.move, value: it.playCount / this.playCount}
         });
-        moves = _.orderBy(moves, 'value', 'desc');
-        return moves;
+        res.max = _.maxBy(res.moves, 'value').value;
+        res.mean = _.meanBy(res.moves, 'value');
+        //moves.forEach(it => it.value = it.value / max);
+        //res.variance = _.sumBy(res.moves, it => Math.pow(it.value - res.mean, 2)) / res.moves.length;
+        //res.std = Math.sqrt(res.variance);
+        res.moves = _.orderBy(res.moves, 'value', 'desc');
+        return res;
     }
 
     selection() {
@@ -33,7 +39,7 @@ class AI {
             this.node.children.forEach(it => it.calculateUCB(this.node.playCount));
             let sorted = _.orderBy(this.node.children, 'ucb', 'desc');
             let nextNode = sorted[0];
-            this.board.makeMove(nextNode.move, nextNode.player);
+            this.board.setIndex(nextNode.move, nextNode.player);
             this.node = nextNode;
         }
         if (this.node.move !== undefined) {
@@ -53,7 +59,7 @@ class AI {
                 moves.forEach(m => this.node.children.push(new Node(this.node, np, m)));
                 let moveIndex = Math.floor(Math.random() * this.node.children.length);
                 let nextNode = this.node.children[moveIndex];
-                this.board.makeMove(nextNode.move, nextNode.player);
+                this.board.setIndex(nextNode.move, nextNode.player);
                 this.node = nextNode;
             }
         }

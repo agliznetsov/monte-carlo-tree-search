@@ -17,9 +17,9 @@ describe('AI', () => {
         for(let i=0; i<100; i++) {
             ai.step();
         }
-        let moves = ai.getMoves();
-        assert.equal(7, moves.length);
-        let move = moves[0].move;
+        let res = ai.getResult();
+        assert.equal(7, res.moves.length);
+        let move = res.moves[0].move;
         assert.equal(3, move);
     });
 

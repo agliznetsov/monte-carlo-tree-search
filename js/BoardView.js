@@ -7,6 +7,7 @@ class BoardView {
         this.width = board.width * this.cellSize;
         this.height = board.height * this.cellSize;
         $(selector).click(this.onClick.bind(this));
+
         this.drawGrid();
         this.refresh();
     }
@@ -41,7 +42,7 @@ class BoardView {
         }
     }
 
-    refresh() {
+    refresh(selectedMove) {
         let container = d3.select(this.selector);
         let data = [];
         let that = this;
@@ -53,8 +54,18 @@ class BoardView {
                 win: that.board.win && that.board.win.cells[key]
             })
         });
+        if (selectedMove) {
+            data.push({
+                id: selectedMove.move,
+                cell: that.board.cell(selectedMove.move),
+                value: selectedMove.player,
+                win: true
+            })
+        }
 
         let cells = container.selectAll(".cell").data(data, (d) => d.id);
+
+        cells.exit().remove();
 
         cells.enter()
 
@@ -69,7 +80,8 @@ class BoardView {
             .classed("fa-close", (d) => d.value == 1)
             .classed("fa-circle-o", (d) => d.value == 2);
 
-        container.selectAll(".cell").data(data).merge(cells).classed("win", (d) => d.win)
+        container.selectAll(".cell").data(data, (d) => d.id).merge(cells).classed("win", (d) => d.win)
 
     }
+
 }

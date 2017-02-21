@@ -59,11 +59,17 @@ select.input-sm, .input-sm {
 }
 
 #moves-chart {
-    width: 240px;
+    width: 300px;
     height: 60px;
     border: 1px solid gray;
     display: flex;
     align-items: flex-end;
+}
+
+#line-chart {
+    width: 300px;
+    height: 60px;
+    border: 1px solid gray;
 }
 
 #moves-chart div {
@@ -72,10 +78,14 @@ select.input-sm, .input-sm {
     flex: 1;
 }
 
+#moves-chart div.selected {
+    background-color: red;
+}
+
 /*board*/
 
 .highlight {
-    text-shadow: 4px 4px 8px #FF0000;
+    text-shadow: 4px 4px 8px red;
 }
 
 .board-parent {

@@ -24,10 +24,9 @@
 
 <div class="well well-sm">
     <div class="container toolbar">
-        <div class="btn-group">
+        <div class="btn-group toolbar-item">
             <button id="restart" class="btn btn-danger" title="Restart game"><i class="fa fa-repeat"></i></button>
-            <button id="help" class="btn bth-default" title="Find best move"><i class="fa fa-question-circle"></i></button>
-            <button id="stop" class="btn btn-default" title="Stop search"><i class="fa fa-stop-circle"></i></button>
+            <button id="analyze" class="btn bth-default" title="Analyze board"><i class="fa fa-play"></i></button>
         </div>
         <div class="toolbar-item">
             <label>Game</label>
@@ -51,7 +50,12 @@
                 <label>Iterations</label>
                 <div class="value" id="iterations">0</div>
             </div>
+            <div class="toolbar-item">
+                <label>Confidence</label>
+                <div class="value" id="confidence">0</div>
+            </div>
             <div id="moves-chart"></div>
+            <div id="line-chart"></div>
         </div>
     </div>
 </div>
@@ -67,7 +71,9 @@
 <script src="node_modules/lodash/lodash.min.js"></script>
 <script src="node_modules/d3/build/d3.min.js"></script>
 
+<script src="js/MessageBus.js"></script>
 <script src="js/BarChart.js"></script>
+<script src="js/LineChart.js"></script>
 <script src="js/Board.js"></script>
 <script src="js/BoardView.js"></script>
 <script src="js/AI.js"></script>

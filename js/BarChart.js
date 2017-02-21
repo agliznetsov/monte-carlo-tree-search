@@ -1,29 +1,46 @@
 class BarChart {
-    constructor(container) {
-        let data = [];
-        for (let i = 0; i < 10; i++) {
-            data.push(Math.random());
+    constructor(selector) {
+        this.selector = selector;
+        $(selector).mousemove(this.onMouseMove.bind(this));
+        $(selector).mouseleave(this.onMouseLeave.bind(this));
+    }
+
+    onMouseMove(e) {
+        if (this.aiResult && this.aiResult.moves.length) {
+            let moves = this.aiResult.moves;
+            let offset = $(this.selector).offset();
+            let barWidth = $(this.selector).width() / moves.length;
+            let x = Math.floor((e.pageX - offset.left) /barWidth);
+            if (x < moves.length) {
+                this.setSelection(moves[x].move);
+            }
         }
+    }
 
-        data = _.sortBy(data);
+    onMouseLeave(e) {
+        this.setSelection(undefined);
+    }
 
-        // var x = d3.scaleLinear()
-        //     .domain([0, d3.max(data)])
-        //     .range([0, 420]);
+    setSelection(selection) {
+        this.selection = selection;
+        this.refresh(this.aiResult);
+        MessageBus.get().publish('move-selected', this.selection);
+    }
 
-        let div = container.selectAll("div").data(data)
-            .enter().append("div").attr('data-id', (d, i) => i)
-            .exit().remove();
+    refresh(aiResult) {
+        this.aiResult = aiResult;
+        let moves = aiResult ? aiResult.moves : [];
 
-        container.selectAll("div").data(data).merge(div)
-            //.transition()
-            .style("height", (data) => (data * 100) + "%");
+        let container = d3.select(this.selector);
 
-        // let div = container.selectAll("div").data(data);
-        // div.exit().remove();
-        // let append = div.enter().append("div");
-        // this.drawBar(append);
-        // let merge = append.merge(div);
-        // this.drawBar(merge.transition());
+        let div = container.selectAll("div").data(moves, (d) => d.move);
+
+        div.exit().remove();
+        div.enter().append("div").attr('data-id', (d, i) => d.move);
+
+        container.selectAll("div").data(moves, (d) => d.move).merge(div)
+            .style("height", (d) => (d.value / aiResult.max * 100) + "%")
+            .classed("selected", (d) => d.move === this.selection)
+            .order()
     }
 }

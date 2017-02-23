@@ -46,15 +46,19 @@ class BoardView {
         let container = d3.select(this.selector);
         let data = [];
         let that = this;
+        let selectionAdded = false;
         _.forOwn(this.board.cells, function (value, key) {
             data.push({
                 id: key,
                 cell: that.board.cell(key),
                 value: value,
-                win: that.board.win && that.board.win.cells[key]
-            })
+                win: (that.board.win && that.board.win.cells[key]) || (selectedMove && key === selectedMove.move)
+            });
+            if (selectedMove && key === selectedMove.move) {
+                selectionAdded = true;
+            }
         });
-        if (selectedMove) {
+        if (selectedMove && !selectionAdded) {
             data.push({
                 id: selectedMove.move,
                 cell: that.board.cell(selectedMove.move),

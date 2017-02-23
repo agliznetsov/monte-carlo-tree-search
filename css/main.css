@@ -58,18 +58,16 @@ select.input-sm, .input-sm {
     text-align: end;
 }
 
-#moves-chart {
+.chart {
     width: 300px;
     height: 60px;
     border: 1px solid gray;
-    display: flex;
-    align-items: flex-end;
+    margin-right: 10px;
 }
 
-#line-chart {
-    width: 300px;
-    height: 60px;
-    border: 1px solid gray;
+#moves-chart {
+    display: flex;
+    align-items: flex-end;
 }
 
 #moves-chart div {

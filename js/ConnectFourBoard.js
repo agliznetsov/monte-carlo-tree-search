@@ -1,12 +1,19 @@
 'use strict';
 
-class Board {
-    constructor(width = 3, height = 3, winSize = 3) {
+class ConnectFourBoard {
+    constructor() {
         this.cells = {};
-        this.width = width;
-        this.height = height;
-        this.winSize = winSize;
+        this.width = 7;
+        this.height = 6;
+        this.winSize = 4;
         this.win = undefined;
+        this.moves = {};
+    }
+
+    init() {
+        for (let x = 0; x < this.width; x++) {
+            this.moves[this.index(x, this.height - 1)] = true;
+        }
     }
 
     nextPlayer(player) {
@@ -14,8 +21,9 @@ class Board {
     }
 
     clone() {
-        let board = new Board(this.width, this.height, this.winSize);
+        let board = new ConnectFourBoard(this.width, this.height, this.winSize);
         board.cells = Object.assign(board.cells, this.cells);
+        board.moves = Object.assign(board.moves, this.moves);
         return board;
     }
 
@@ -29,9 +37,10 @@ class Board {
 
     setIndex(index, value) {
         if (this.cells[index] && value) {
-            throw new Error('Cell (' + move + ') is already set');
+            throw new Error('Cell (' + index + ') is already set');
         }
         this.cells[index] = value;
+        this.addMoves(index);
     }
 
     index(x, y) {
@@ -56,15 +65,16 @@ class Board {
         }
     }
 
-    findAllMoves() {
-        let moves = [];
-        let size = this.width * this.height;
-        for (let i = 0; i < size; i++) {
-            if (!this.cells[i]) {
-                moves.push(i);
-            }
+    getMoves() {
+        return _.keys(this.moves);
+    }
+
+    addMoves(index) {
+        let c = this.cell(index);
+        delete this.moves[index];
+        if (c.y > 0) {
+            this.moves[this.index(c.x, c.y - 1)] = true;
         }
-        return moves;
     }
 
     findWinner(index) {
@@ -126,8 +136,11 @@ class Board {
     }
 
     randomPlayout(player) {
-        let moves = this.findAllMoves();
-        while (moves.length) {
+        while (true) {
+            let moves = this.getMoves();
+            if (moves.length == 0) {
+                break;
+            }
             let moveIndex = Math.floor(Math.random() * moves.length);
             let move = moves[moveIndex];
             this.setIndex(move, player);
@@ -135,10 +148,8 @@ class Board {
             if (win) {
                 return win;
             } else {
-                moves.splice(moveIndex, 1);
                 player = this.nextPlayer(player);
             }
-
         }
         return false;
     }
@@ -146,5 +157,5 @@ class Board {
 }
 
 if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = Board;
+    module.exports = ConnectFourBoard;
 }

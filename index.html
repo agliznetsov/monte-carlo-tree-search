@@ -31,15 +31,9 @@
         <div class="toolbar-item">
             <label>Game</label>
             <select class="form-control input-sm" id="game">
-                <option value="t4">Tic Tac Toe 4</option>
-                <option value="t5">Tic Tac Toe 5</option>
+                <option value="c">Connect Four</option>
+                <option value="t">Tic Tac Toe</option>
             </select>
-        </div>
-        <div class="toolbar-item">
-            <label>Exploration</label>
-            <div>
-                <input type="number" class="form-control input-sm" value="1.4" style="width: 100px"/>
-            </div>
         </div>
         <div class="right">
             <div class="toolbar-item">
@@ -54,8 +48,8 @@
                 <label>Confidence</label>
                 <div class="value" id="confidence">0</div>
             </div>
-            <div id="moves-chart"></div>
-            <div id="line-chart"></div>
+            <div id="moves-chart" class="chart"></div>
+            <div id="line-chart" class="chart"></div>
         </div>
     </div>
 </div>
@@ -74,7 +68,8 @@
 <script src="js/MessageBus.js"></script>
 <script src="js/BarChart.js"></script>
 <script src="js/LineChart.js"></script>
-<script src="js/Board.js"></script>
+<script src="js/TicTacToeBoard.js"></script>
+<script src="js/ConnectFourBoard.js"></script>
 <script src="js/BoardView.js"></script>
 <script src="js/AI.js"></script>
 <script src="js/App.js"></script>

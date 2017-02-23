@@ -1,5 +1,6 @@
 class AI {
     constructor(board, player) {
+        this.player = player;
         this.originalBoard = board;
         this.node = new Node(undefined, board.nextPlayer(player), undefined);
         this.playCount = 0;
@@ -24,9 +25,7 @@ class AI {
         });
         res.max = _.maxBy(res.moves, 'value').value;
         res.mean = _.meanBy(res.moves, 'value');
-        //moves.forEach(it => it.value = it.value / max);
-        //res.variance = _.sumBy(res.moves, it => Math.pow(it.value - res.mean, 2)) / res.moves.length;
-        //res.std = Math.sqrt(res.variance);
+        res.confidence = (res.max - res.mean) / res.mean;
         res.moves = _.orderBy(res.moves, 'value', 'desc');
         return res;
     }
@@ -53,7 +52,7 @@ class AI {
     expansion() {
         if (this.node.children === null) {
             this.node.children = [];
-            let moves = this.board.findAllMoves();
+            let moves = this.board.getMoves();
             if (moves.length) {
                 let np = this.board.nextPlayer(this.node.player);
                 moves.forEach(m => this.node.children.push(new Node(this.node, np, m)));
@@ -77,8 +76,14 @@ class AI {
     backpropogation(win) {
         while (true) {
             this.node.playCount++;
-            if (win && win.player === this.node.player) {
-                this.node.winCount++;
+            if (win) {
+                if (win.player === this.node.player) {
+                    this.node.winCount++;
+                // } else {
+                //     this.node.winCount--;
+                }
+            } else {
+                this.node.winCount += 0.5; //half point for a tie
             }
             if (this.node.parent) {
                 this.node = this.node.parent;

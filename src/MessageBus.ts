@@ -1,23 +1,23 @@
-class MessageBus {
+export default class MessageBus {
+    private static instance:MessageBus = new MessageBus();
+    private consumers = {};
+
+    private constructor() {
+
+    }
+
     static get() {
-        if (!this.instance) {
-            this.instance = new MessageBus();
-        }
-        return this.instance;
+        return MessageBus.instance;
     }
 
-    constructor() {
-        this.consumers = {};
-    }
-
-    publish(event, data) {
+    publish(event: string, data) {
         let arr = this.consumers[event];
         if (arr) {
             arr.forEach(it => it(data));
         }
     }
 
-    subscribe(event, consumer) {
+    subscribe(event: string, consumer) {
         let arr = this.consumers[event];
         if (!arr) {
             arr = [];

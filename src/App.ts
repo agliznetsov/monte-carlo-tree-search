@@ -1,4 +1,33 @@
+import * as d3 from 'd3';
+import * as _ from 'lodash';
+import * as $ from 'jquery';
+
+import MessageBus from './MessageBus';
+import BarChart from './BarChart';
+import LineChart from './LineChart';
+import TicTacToeBoard from './TicTacToeBoard';
+import ConnectFourBoard from './ConnectFourBoard';
+import BoardView from './BoardView';
+import AI from './AI';
+
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "../node_modules/font-awesome/css/font-awesome.min.css";
+// import "../css/bootstrap.min.css";
+import "../css/main.css";
+
 class App {
+    private barChart;
+    private lineChart;
+    private boardView;
+    private board;
+    private timer;
+    private player;
+    private iteration;
+    private confidences;
+    private ai;
+    private stop;
+    private aiResult;
+
     init() {
         $('#restart').click(this.restart.bind(this));
         $('#analyze').click(this.analyze.bind(this));
@@ -78,7 +107,7 @@ class App {
         if (this.confidences.length >= 20) {
             let arr = this.confidences.slice(this.confidences.length - 20, -1);
             let mean = _.mean(arr);
-            let variance = _.sumBy(arr, it => Math.pow(it - mean, 2)) / arr.length;
+            let variance = _.sumBy(arr, (it: any) => Math.pow(it - mean, 2)) / arr.length;
             let std = Math.sqrt(variance);
             return std;
         } else {

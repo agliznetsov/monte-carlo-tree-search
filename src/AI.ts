@@ -1,4 +1,13 @@
-class AI {
+import * as _ from 'lodash';
+let __: any = _; //HACK: to overcome wrong types mapping for lodash
+
+export default class AI {
+    private player;
+    private originalBoard;
+    private node;
+    private playCount;
+    private board;
+
     constructor(board, player) {
         this.player = player;
         this.originalBoard = board;
@@ -19,25 +28,26 @@ class AI {
     }
 
     getResult() {
-        let res = {};
-        res.moves = _.map(this.node.children, (it) => {
+        let res: any = {};
+        let moves: any[];
+        moves = _.map(this.node.children, (it: any) => {
             return {move: it.move, value: it.playCount / this.playCount}
         });
-        res.max = _.maxBy(res.moves, 'value').value;
-        res.mean = _.meanBy(res.moves, 'value');
+        res.max = _.maxBy(moves, 'value').value;
+        res.mean = __.meanBy(moves, 'value');
         res.confidence = (res.max - res.mean) / res.mean;
-        res.moves = _.orderBy(res.moves, 'value', 'desc');
+        res.moves = _.orderBy(moves, 'value', 'desc');
         return res;
     }
 
     selection() {
         if (this.node.parent) {
-            throw new Error('invalid start node', this.node);
+            throw new Error('invalid start node: ' + this.node);
         }
         while (this.node.children && this.node.children.length) {
             this.node.children.forEach(it => it.calculateUCB(this.node.playCount));
             let sorted = _.orderBy(this.node.children, 'ucb', 'desc');
-            let nextNode = sorted[0];
+            let nextNode: any = sorted[0];
             this.board.setIndex(nextNode.move, nextNode.player);
             this.node = nextNode;
         }
@@ -79,8 +89,8 @@ class AI {
             if (win) {
                 if (win.player === this.node.player) {
                     this.node.winCount++;
-                // } else {
-                //     this.node.winCount--;
+                    // } else {
+                    //     this.node.winCount--;
                 }
             } else {
                 this.node.winCount += 0.5; //half point for a tie
@@ -96,13 +106,18 @@ class AI {
 }
 
 class Node {
+    public parent;
+    public player;
+    public move;
+    public children = null;
+    public playCount = 0;
+    public winCount = 0;
+    public ucb;
+
     constructor(parent, player, move) {
         this.parent = parent;
-        this.children = null;
         this.player = player;
         this.move = move;
-        this.playCount = 0;
-        this.winCount = 0;
     }
 
     calculateUCB(total) {
@@ -114,8 +129,4 @@ class Node {
             this.ucb = this.winCount / this.playCount + tmp;
         }
     }
-}
-
-if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = AI;
 }

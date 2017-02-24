@@ -1,20 +1,16 @@
-global._ = require('lodash');
-
-const assert = require('assert');
-const ConnectFourBoard = require('../js/ConnectFourBoard');
-
-describe('Board', () => {
-
-    it('getMoves', () => {
-        let board = new ConnectFourBoard();
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var assert = require("assert");
+var ConnectFourBoard_1 = require("../src/ConnectFourBoard");
+describe('Board', function () {
+    it('getMoves', function () {
+        var board = new ConnectFourBoard_1.default();
         board.init();
-        let moves = board.getMoves();
+        var moves = board.getMoves();
         assert.equal(moves.length, 7);
-
         board.set(3, 5, 1);
         moves = board.getMoves();
         assert.equal(moves.length, 7);
     });
-
 });
+//# sourceMappingURL=ConnectFourBoardTest.js.map

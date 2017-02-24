@@ -1,9 +1,19 @@
-class BoardView {
+import * as _ from 'lodash';
+import * as d3 from 'd3';
+import * as $ from 'jquery';
+
+export default class BoardView {
+    private selector;
+    private board;
+    private boardClick;
+    private cellSize = 30;
+    private width;
+    private height;
+
     constructor(selector, board, boardClick) {
         this.selector = selector;
         this.board = board;
         this.boardClick = boardClick;
-        this.cellSize = 30;
         this.width = board.width * this.cellSize;
         this.height = board.height * this.cellSize;
         $(selector).click(this.onClick.bind(this));
@@ -42,7 +52,7 @@ class BoardView {
         }
     }
 
-    refresh(selectedMove) {
+    refresh(selectedMove?) {
         let container = d3.select(this.selector);
         let data = [];
         let that = this;

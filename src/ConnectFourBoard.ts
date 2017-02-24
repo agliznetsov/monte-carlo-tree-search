@@ -1,17 +1,25 @@
-'use strict';
+import * as _ from 'lodash';
 
-class TicTacToeBoard {
-    constructor(width = 3, height = 3, winSize = 3) {
+export default class ConnectFourBoard {
+    private cells;
+    private width;
+    private height;
+    private winSize;
+    public win;
+    private moves;
+
+    constructor() {
         this.cells = {};
-        this.width = width;
-        this.height = height;
-        this.winSize = winSize;
-        this.win = undefined;
         this.moves = {};
+        this.width = 7;
+        this.height = 6;
+        this.winSize = 4;
     }
 
     init() {
-        this.moves[this.index(Math.floor(this.width/2), Math.floor(this.height/2))] = true;
+        for (let x = 0; x < this.width; x++) {
+            this.moves[this.index(x, this.height - 1)] = true;
+        }
     }
 
     nextPlayer(player) {
@@ -19,9 +27,11 @@ class TicTacToeBoard {
     }
 
     clone() {
-        let board = new TicTacToeBoard(this.width, this.height, this.winSize);
-        board.cells = Object.assign(board.cells, this.cells);
-        board.moves = Object.assign(board.moves, this.moves);
+        let board = new ConnectFourBoard();
+        // board.cells = Object.assign(board.cells, this.cells);
+        // board.moves = Object.assign(board.moves, this.moves);
+        board.cells = _.clone(this.cells);
+        board.moves = _.clone(this.moves);
         return board;
     }
 
@@ -68,33 +78,11 @@ class TicTacToeBoard {
     }
 
     addMoves(index) {
-        const rad = 1;
         let c = this.cell(index);
-        let x1 = Math.max(0, c.x - rad);
-        let y1 = Math.max(0, c.y - rad);
-        let x2 = Math.min(this.width - 1, c.x + rad);
-        let y2 = Math.min(this.height - 1, c.y + rad);
-        for(let x = x1; x <= x2; x++) {
-            for(let y = y1; y <= y2; y++) {
-                let i = this.index(x, y);
-                if (!this.cells[i]) {
-                    this.moves[i] = true;
-                } else {
-                    delete this.moves[i];
-                }
-            }
+        delete this.moves[index];
+        if (c.y > 0) {
+            this.moves[this.index(c.x, c.y - 1)] = true;
         }
-    }
-
-    findAllMoves() {
-        let moves = [];
-        let size = this.width * this.height;
-        for (let i = 0; i < size; i++) {
-            if (!this.cells[i]) {
-                moves.push(i);
-            }
-        }
-        return moves;
     }
 
     findWinner(index) {
@@ -155,22 +143,6 @@ class TicTacToeBoard {
         }
     }
 
-    // randomPlayout(player) {
-    //     let moves = this.findAllMoves();
-    //     while (moves.length) {
-    //         let moveIndex = Math.floor(Math.random() * moves.length);
-    //         let move = moves[moveIndex];
-    //         this.setIndex(move, player);
-    //         let win = this.findWinner(move);
-    //         if (win) {
-    //             return win;
-    //         } else {
-    //             player = this.nextPlayer(player);
-    //         }
-    //     }
-    //     return false;
-    // }
-
     randomPlayout(player) {
         while (true) {
             let moves = this.getMoves();
@@ -190,8 +162,4 @@ class TicTacToeBoard {
         return false;
     }
 
-}
-
-if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = TicTacToeBoard;
 }

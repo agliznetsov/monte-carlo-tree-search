@@ -1,4 +1,13 @@
-class LineChart {
+import * as d3 from 'd3';
+
+export default class LineChart {
+    private data;
+    private minY;
+    private maxY;
+    private xScale;
+    private yScale;
+    private svg;
+    private path;
 
     constructor(selector) {
         this.data = [];
@@ -54,8 +63,8 @@ class LineChart {
         this.yScale.domain([this.minY, this.maxY]);
         // Adjust all the <path> elements (lines).
         let line = d3.line()
-            .x(d => this.xScale(d.x))
-            .y(d => this.yScale(d.y));
+            .x((d: any) => this.xScale(d.x))
+            .y((d: any) => this.yScale(d.y));
         this.path.datum(this.data).attr("d", line);
     }
 }

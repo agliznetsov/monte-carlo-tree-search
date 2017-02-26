@@ -1,4 +1,5 @@
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: './src/App.js',
@@ -15,7 +16,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                // use: ['style-loader', 'css-loader']
+                use: ExtractTextPlugin.extract({use: 'css-loader'})
             },
             {
                 test: /\.(woff|woff2|ttf|eot|svg)(.*)?$/,
@@ -31,6 +33,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: 'img', to: 'img'},
             {from: 'index.html', to: ''}
-        ])
+        ]),
+        new ExtractTextPlugin('bundle.css'),
     ]
 };

@@ -12,7 +12,6 @@ import AI from './AI';
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/font-awesome/css/font-awesome.min.css";
-// import "../css/bootstrap.min.css";
 import "../css/main.css";
 
 class App {

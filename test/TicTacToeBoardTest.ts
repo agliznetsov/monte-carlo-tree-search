@@ -2,7 +2,7 @@ import * as assert from 'assert';
 
 import TicTacToeBoard from '../src/TicTacToeBoard';
 
-describe('Board', () => {
+describe('TicTacToeBoard', () => {
     it('cells', () => {
         let board = new TicTacToeBoard(10, 10);
         assert.equal(null, board.get(0, 0));
@@ -43,20 +43,21 @@ describe('Board', () => {
     it('wrong move', () => {
         let board = new TicTacToeBoard(10, 10);
         board.set(0, 0, 1);
-        assert.throws(() => board.setIndex(0, 2));
+        assert.throws(() => board.set(0, 0, 2));
+        assert.throws(() => board.setIndex("0", 2));
     });
 
     it('findWinner empty', () => {
         let board = new TicTacToeBoard(10, 10, 2);
         board.set(0, 0, 1);
-        assert.equal(false, board.findWinner(0));
+        assert.equal(null, board.findWinner(0, 0));
     });
 
     it('findWinner row', () => {
         let board = new TicTacToeBoard(10, 10, 2);
         board.set(1, 1, 1);
         board.set(2, 1, 1);
-        let res:any = board.findWinner(board.index(1, 1));
+        let res:any = board.findWinner(1, 1);
         assert.equal(1, res.player);
         assert.deepEqual({ '11': true, '12': true }, res.cells);
     });
@@ -65,7 +66,7 @@ describe('Board', () => {
         let board = new TicTacToeBoard(10, 10, 2);
         board.set(1, 1, 1);
         board.set(1, 2, 1);
-        let res:any = board.findWinner(board.index(1, 1));
+        let res:any = board.findWinner(1, 1);
         assert.equal(1, res.player);
         assert.deepEqual({ '11': true, '21': true }, res.cells);
     });
@@ -75,7 +76,7 @@ describe('Board', () => {
         board.set(0, 2, 1);
         board.set(1, 3, 1);
         board.set(2, 4, 1);
-        let res:any = board.findWinner(board.index(0, 2));
+        let res:any = board.findWinner(0, 2);
         assert.equal(1, res.player);
         assert.deepEqual({ '20': true, '31': true, '42': true }, res.cells);
     });

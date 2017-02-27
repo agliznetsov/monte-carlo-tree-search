@@ -42,7 +42,7 @@ select.input-sm, .input-sm {
 
 .toolbar {
     display: flex;
-    /*align-items: center;*/
+    justify-content: center;
 }
 
 .toolbar > .btn-group {
@@ -52,6 +52,10 @@ select.input-sm, .input-sm {
 }
 
 .toolbar-item {
+    margin-right: 10px;
+}
+
+.toolbar-item-100 {
     margin-right: 10px;
     min-width: 100px;
 }
@@ -71,7 +75,7 @@ select.input-sm, .input-sm {
 }
 
 .chart {
-    width: 300px;
+    min-width: 300px;
     height: 60px;
     border: 1px solid gray;
     margin-right: 10px;
@@ -94,9 +98,6 @@ select.input-sm, .input-sm {
 
 /*board*/
 
-.highlight {
-    text-shadow: 4px 4px 8px red;
-}
 
 .board-parent {
     display: flex;
@@ -131,7 +132,10 @@ select.input-sm, .input-sm {
 }
 
 .cell.win {
-    text-shadow: 3px 3px 6px #FF0000;
+    text-shadow: 3px 3px 6px red;
 }
 
+.cell.selected {
+    text-shadow: 3px 3px 6px blue;
+}
 

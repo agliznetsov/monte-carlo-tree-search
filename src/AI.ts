@@ -1,17 +1,18 @@
 import * as _ from 'lodash';
+import {Board, Win} from "./Board";
 let __: any = _; //HACK: to overcome wrong types mapping for lodash
 
 export default class AI {
-    private player;
-    private originalBoard;
-    private node;
-    private playCount;
-    private board;
+    private player: number;
+    private originalBoard: Board;
+    private node: Node;
+    private playCount: number;
+    private board: Board;
 
-    constructor(board, player) {
+    constructor(board: Board, player: number) {
         this.player = player;
         this.originalBoard = board;
-        this.node = new Node(undefined, board.nextPlayer(player), undefined);
+        this.node = new Node(null, Board.nextPlayer(player), null);
         this.playCount = 0;
     }
 
@@ -40,7 +41,7 @@ export default class AI {
         return res;
     }
 
-    selection() {
+    selection(): Win {
         if (this.node.parent) {
             throw new Error('invalid start node: ' + this.node);
         }
@@ -51,9 +52,9 @@ export default class AI {
             this.board.setIndex(nextNode.move, nextNode.player);
             this.node = nextNode;
         }
-        if (this.node.move !== undefined) {
-            if (this.node.win === undefined) {
-                this.node.win = this.board.findWinner(this.node.move);
+        if (this.node.move !== null) {
+            if (this.node.win === null) {
+                this.node.win = this.board.findWinnerAt(this.node.move);
             }
         }
         return this.node.win;
@@ -64,7 +65,7 @@ export default class AI {
             this.node.children = [];
             let moves = this.board.getMoves();
             if (moves.length) {
-                let np = this.board.nextPlayer(this.node.player);
+                let np = Board.nextPlayer(this.node.player);
                 moves.forEach(m => this.node.children.push(new Node(this.node, np, m)));
                 let moveIndex = Math.floor(Math.random() * this.node.children.length);
                 let nextNode = this.node.children[moveIndex];
@@ -74,12 +75,12 @@ export default class AI {
         }
     }
 
-    simulation() {
-        let win = this.board.findWinner(this.node.move);
+    simulation(): Win {
+        let win = this.board.findWinnerAt(this.node.move);
         if (win) {
             return win;
         } else {
-            return this.board.randomPlayout(this.board.nextPlayer(this.node.player));
+            return this.board.randomPlayout(Board.nextPlayer(this.node.player));
         }
     }
 
@@ -106,6 +107,7 @@ export default class AI {
 }
 
 class Node {
+    public win: Win = null;
     public parent;
     public player;
     public move;
@@ -114,7 +116,7 @@ class Node {
     public winCount = 0;
     public ucb;
 
-    constructor(parent, player, move) {
+    constructor(parent: Node, player: number, move: string) {
         this.parent = parent;
         this.player = player;
         this.move = move;

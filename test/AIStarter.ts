@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
-
 import ConnectFourBoard from '../src/ConnectFourBoard';
 import AI from '../src/AI';
+import {Board} from "../src/Board";
 
 
 describe('AI', () => {
@@ -31,9 +30,10 @@ function playGame() {
     let board = new ConnectFourBoard();
     board.init();
     let iteration = 1;
+    let win = null;
     while (true) {
-        if (board.win) {
-            console.log('Player win: ', board.win.player);
+        if (win) {
+            console.log('Player win: ', win.player);
             break;
         } else if (board.getMoves().length == 0) {
             console.log('Tie!');
@@ -41,16 +41,17 @@ function playGame() {
         } else {
             iteration++;
             let move = analyze(board, player, iteration);
-            board.setIndex(move, player);
-            board.findWinner(move);
-            player = board.nextPlayer(player);
+            let cell = board.cell(move);
+            board.set(cell.x, cell.y, player);
+            win = board.findWinner(cell.x, cell.y);
+            player = Board.nextPlayer(player);
         }
     }
     let elapsed = new Date().getTime() - start;
     board.print();
     console.log('Game time', elapsed / 1000, 'moves', iteration);
 
-    return board.win.player;
+    return win.player;
 }
 
 function analyze(board, player, move) {

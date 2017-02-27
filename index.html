@@ -20,34 +20,36 @@
 
 
 <div class="well well-sm">
-    <div class="container toolbar">
+    <div class="toolbar">
         <div class="btn-group toolbar-item">
             <button id="restart" class="btn btn-danger" title="Restart game"><i class="fa fa-repeat"></i></button>
             <button id="analyze" class="btn bth-default" title="Analyze board"><i class="fa fa-play"></i></button>
         </div>
-        <div class="toolbar-item">
+        <div class="toolbar-item-100">
             <label>Game</label>
             <select class="form-control input-sm" id="game">
                 <option value="c">Connect Four</option>
                 <option value="t">Tic Tac Toe</option>
             </select>
         </div>
-        <div class="right">
-            <div class="toolbar-item">
-                <label>Player</label>
-                <div id="player"></div>
-            </div>
-            <div class="toolbar-item">
-                <label>Iterations</label>
-                <div class="value" id="iterations">0</div>
-            </div>
-            <div class="toolbar-item">
-                <label>Confidence</label>
-                <div class="value" id="confidence">0</div>
-            </div>
-            <div id="moves-chart" class="chart"></div>
-            <div id="line-chart" class="chart"></div>
+        <div class="toolbar-item">
+            <label>Player</label>
+            <div id="player"></div>
         </div>
+        <div class="toolbar-item-100">
+            <label>Iterations</label>
+            <div class="value" id="iterations">0</div>
+        </div>
+        <div class="toolbar-item-100">
+            <label>Time</label>
+            <div class="value" id="time">0</div>
+        </div>
+        <div class="toolbar-item-100">
+            <label>Confidence</label>
+            <div class="value" id="confidence">0</div>
+        </div>
+        <div id="moves-chart" class="chart"></div>
+        <div id="line-chart" class="chart"></div>
     </div>
 </div>
 

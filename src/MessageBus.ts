@@ -3,10 +3,9 @@ export default class MessageBus {
     private consumers = {};
 
     private constructor() {
-
     }
 
-    static get() {
+    static get(): MessageBus {
         return MessageBus.instance;
     }
 

@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p . && webpack --bail --colors --progress",
-    "start": "webpack-dev-server --bail --colors --progress --port 8000",
+    "start": "tsc -p . && webpack-dev-server --bail --colors --progress --port 8000",
     "dist": "http-server dist -p 8000 -c-1 -o",
     "test": "tsc -p . && mocha --colors test/**/*Test.js"
   }

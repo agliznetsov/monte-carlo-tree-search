@@ -1,16 +1,17 @@
 import * as _ from 'lodash';
 import * as d3 from 'd3';
 import * as $ from 'jquery';
+import {Board} from "./Board";
 
 export default class BoardView {
-    private selector;
-    private board;
+    private readonly cellSize = 30;
+    private selector: string;
+    private board: Board;
     private boardClick;
-    private cellSize = 30;
-    private width;
-    private height;
+    private width: number;
+    private height: number;
 
-    constructor(selector, board, boardClick) {
+    constructor(selector: string, board: Board, boardClick) {
         this.selector = selector;
         this.board = board;
         this.boardClick = boardClick;
@@ -62,7 +63,8 @@ export default class BoardView {
                 id: key,
                 cell: that.board.cell(key),
                 value: value,
-                win: (that.board.win && that.board.win.cells[key]) || (selectedMove && key === selectedMove.move)
+                win: (that.board.win && that.board.win.cells[key]),
+                selected: (selectedMove && key === selectedMove.move)
             });
             if (selectedMove && key === selectedMove.move) {
                 selectionAdded = true;
@@ -73,7 +75,7 @@ export default class BoardView {
                 id: selectedMove.move,
                 cell: that.board.cell(selectedMove.move),
                 value: selectedMove.player,
-                win: true
+                selected: true
             })
         }
 
@@ -86,6 +88,7 @@ export default class BoardView {
             .append("div")
             .classed("cell", true)
             .classed("win", (d) => d.win)
+            .classed("selected", (d) => d.selected)
             .style('left', (d) => (d.cell.x * this.cellSize) + "px")
             .style('top', (d) => (d.cell.y * this.cellSize) + "px")
 
@@ -94,7 +97,9 @@ export default class BoardView {
             .classed("fa-close", (d) => d.value == 1)
             .classed("fa-circle-o", (d) => d.value == 2);
 
-        container.selectAll(".cell").data(data, (d) => d.id).merge(cells).classed("win", (d) => d.win)
+        container.selectAll(".cell").data(data, (d) => d.id).merge(cells)
+            .classed("win", (d) => d.win)
+            .classed("selected", (d) => d.selected)
 
     }
 

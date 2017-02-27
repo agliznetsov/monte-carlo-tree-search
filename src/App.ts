@@ -13,18 +13,20 @@ import AI from './AI';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/font-awesome/css/font-awesome.min.css";
 import "../css/main.css";
+import {Board} from "./Board";
 
 class App {
     private barChart;
     private lineChart;
-    private boardView;
-    private board;
+    private boardView: BoardView;
+    private board: Board;
     private timer;
-    private player;
-    private iteration;
+    private player: number;
+    private iteration: number;
     private confidences;
     private ai;
     private stop;
+    private start;
     private aiResult;
 
     init() {
@@ -46,60 +48,65 @@ class App {
     }
 
     onClick(x, y) {
-        if (!this.board.win && !this.board.get(x, y)) {
-            this.makeMove(this.board.index(x, y));
+        if (!this.board.win && !this.board.get(x, y) && !this.timer) {
+            this.makeMove(x, y);
             if (!this.board.win) {
                 this.analyze();
             }
-            //this.refresh();
         }
     }
 
-    makeMove(move) {
-        this.board.setIndex(move, this.player);
-        this.board.findWinner(move);
+    makeMove(x: number, y: number) {
+        let cell = this.board.makeMove(x, y, this.player);
+        this.board.findWinner(cell.x, cell.y);
         if (!this.board.win) {
-            this.player = this.board.nextPlayer(this.player);
+            this.player = Board.nextPlayer(this.player);
         }
         this.refresh();
     }
 
     analyze() {
         if (!this.timer) {
-            $('#analyze > i').attr('class', 'fa fa-pause');
+            $('#analyze > i').attr('class', 'fa fa-stop');
             this.lineChart.reset();
-            let that = this;
-            that.iteration = 0;
-            that.ai = new AI(this.board, this.player);
-            that.stop = false;
-            let start = new Date().getTime();
-            that.confidences = [];
-            this.timer = d3.timer(function (elapsed) {
-                let frameStart = new Date().getTime();
-                //while (new Date().getTime() - frameStart < 40) { //25 fps
-                for (let i = 0; i < 100; i++) {
-                    that.ai.step();
-                    that.iteration++;
-                }
-                that.aiResult = that.ai.getResult();
-                that.barChart.refresh(that.aiResult);
-                $('#iterations').text(that.iteration);
-                $('#confidence').text(Math.round(that.aiResult.confidence * 100) / 100);
-                that.lineChart.addDataPoint(that.aiResult.confidence);
-                that.confidences.push(Math.round(that.aiResult.confidence * 100) / 100);
-                let std = that.drawConfidenceLine();
-                if (elapsed > 15000 || that.stop || (that.aiResult.confidence > 2) || (std > -1 && std < 0.03 && that.iteration > 1000)) {
-                    that.timer.stop();
-                    that.timer = undefined;
-                    let took = new Date().getTime() - start;
-                    console.log('Took', took / 1000, 'Analyze rate, iterations/sec:', Math.round(that.iteration * 1000 / took));
-                    $('#analyze > i').attr('class', 'fa fa-play');
-                    that.makeMove(that.aiResult.moves[0].move);
-                }
-            });
+            this.iteration = 0;
+            this.ai = new AI(this.board, this.player);
+            this.stop = false;
+            this.start = new Date().getTime();
+            this.confidences = [];
+            this.timer = d3.timer(this.onTimer.bind(this));
         } else {
             this.stop = true;
         }
+    }
+    
+    onTimer(elapsed) {
+        let frameStart = new Date().getTime();
+        while (new Date().getTime() - frameStart < 100) { //10 fps
+            this.ai.step();
+            this.iteration++;
+        }
+        this.aiResult = this.ai.getResult();
+        let time = (new Date().getTime() - this.start) / 1000;
+        this.barChart.refresh(this.aiResult);
+        this.boardView.refresh({move: this.aiResult.moves[0].move, player: this.ai.player});
+        $('#iterations').text(this.iteration);
+        $('#confidence').text(this.format(this.aiResult.confidence));
+        $('#time').text(this.format(time));
+        this.lineChart.addDataPoint(this.aiResult.confidence);
+        this.confidences.push(this.aiResult.confidence);
+        let std = this.drawConfidenceLine();
+        if (elapsed > 15000 || this.stop || (this.aiResult.confidence > 2) || (std > -1 && std < 0.03 && this.iteration > 1000)) {
+            $('#analyze > i').attr('class', 'fa fa-play');
+            let cell = this.board.cell(this.aiResult.moves[0].move);
+            this.makeMove(cell.x, cell.y);
+            this.timer.stop();
+            this.timer = undefined;
+        }
+    }
+
+    format(value: number) {
+        return Math.round(value * 100) / 100;
     }
 
     drawConfidenceLine() {
@@ -121,7 +128,7 @@ class App {
         d3.select('#player')
             .append("div")
             .classed("cell", true)
-            .classed("win", (d) => that.board.win)
+            .classed("win", (d) => that.board.win != null)
             .append("i")
             .attr("class", "fa")
             .classed("fa-close", (d) => that.player == 1)
@@ -133,16 +140,6 @@ class App {
         if (game == 't') {
             this.board = new TicTacToeBoard(15, 15, 5);
             this.board.init();
-
-            // this.board.set(2, 2, 2);
-            // this.board.set(2, 3, 2);
-            // this.board.set(2, 1, 2);
-            // this.board.set(3, 3, 2);
-
-            // this.board.set(3, 3, 1);
-            // this.board.set(2, 2, 1);
-            // this.board.set(3, 2, 2);
-
         } else if (game == 'c') {
             this.board = new ConnectFourBoard();
             this.board.init();

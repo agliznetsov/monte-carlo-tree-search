@@ -4,30 +4,20 @@ import * as $ from 'jquery';
 import {Board} from "./Board";
 
 export default class BoardView {
-    private readonly cellSize = 30;
+    readonly cellSize = 30;
     private selector: string;
     private board: Board;
-    private boardClick;
-    private width: number;
-    private height: number;
+    width: number;
+    height: number;
 
-    constructor(selector: string, board: Board, boardClick) {
+    constructor(selector: string, board: Board) {
         this.selector = selector;
         this.board = board;
-        this.boardClick = boardClick;
         this.width = board.width * this.cellSize;
         this.height = board.height * this.cellSize;
-        $(selector).click(this.onClick.bind(this));
 
         this.drawGrid();
         this.refresh();
-    }
-
-    onClick(e) {
-        let parent = $(this.selector).offset();
-        let y = Math.floor((e.pageY - parent.top) / this.cellSize);
-        let x = Math.floor((e.pageX - parent.left) / this.cellSize);
-        this.boardClick(x, y)
     }
 
     drawGrid() {

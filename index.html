@@ -23,7 +23,10 @@
     <div class="toolbar">
         <div class="btn-group toolbar-item">
             <button id="restart" class="btn btn-danger" title="Restart game"><i class="fa fa-repeat"></i></button>
-            <button id="analyze" class="btn bth-default" title="Analyze board"><i class="fa fa-play"></i></button>
+            <button id="save" class="btn btn-default" title="Save game"><i class="fa fa-save"></i></button>
+            <button id="load" class="btn btn-default" title="Load game"><i class="fa fa-folder-open"></i></button>
+            <button id="settings" class="btn btn-default" title="AI settings"><i class="fa fa-cog"></i></button>
+            <button id="analyze" class="btn btn-default" title="Analyze board"><i class="fa fa-play"></i></button>
         </div>
         <div class="toolbar-item-100">
             <label>Game</label>
@@ -48,6 +51,10 @@
             <label>Confidence</label>
             <div class="value" id="confidence">0</div>
         </div>
+        <div class="toolbar-item-100">
+            <label>Conf. STD</label>
+            <div class="value" id="std">0</div>
+        </div>
         <div id="moves-chart" class="chart"></div>
         <div id="line-chart" class="chart"></div>
     </div>
@@ -56,6 +63,44 @@
 
 <div class="board-parent">
     <div id="board">
+    </div>
+</div>
+
+<div id="config-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">AI Settings</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="form-timeout" class="col-sm-3 control-label">Timeout, sec</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="form-timeout" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="form-confidence" class="col-sm-3 control-label">Confidence</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="form-confidence" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="form-std" class="col-sm-3 control-label">Confidence STD</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="form-std" min="0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="form-apply" type="button" class="btn btn-primary">Apply</button>
+                <button id="form-reset" type="button" class="btn btn-default">Reset</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -4,7 +4,8 @@ import {Board} from "./Board";
 export default class ConnectFourBoard extends Board {
 
     constructor() {
-        super(7, 6, 4);
+        super();
+        this.resize(7, 6, 4);
     }
 
     init() {

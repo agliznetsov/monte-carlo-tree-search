@@ -75,7 +75,7 @@ select.input-sm, .input-sm {
 }
 
 .chart {
-    min-width: 300px;
+    min-width: 200px;
     height: 60px;
     border: 1px solid gray;
     margin-right: 10px;

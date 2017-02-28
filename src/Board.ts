@@ -14,16 +14,9 @@ export abstract class Board {
     moves: {[id: string]: boolean;} = {};
     cells: {[id: string]: number;} = {};
     win: Win;
-    readonly width: number;
-    readonly height: number;
-    readonly winSize: number;
-
-
-    constructor(width: number, height: number, winSize: number) {
-        this.width = width;
-        this.height = height;
-        this.winSize = winSize;
-    }
+    width: number;
+    height: number;
+    winSize: number;
 
     static nextPlayer(player: number): number {
         return player === 1 ? 2 : 1;
@@ -37,6 +30,21 @@ export abstract class Board {
 
     protected abstract addMoves(x: number, y: number);
 
+    resize(width: number, height: number, winSize: number) {
+        this.width = width;
+        this.height = height;
+        this.winSize = winSize;
+    }
+
+    deserialize(data) {
+        this.width = data.width;
+        this.height = data.height;
+        this.winSize = data.winSize;
+        this.moves = data.moves;
+        this.cells = data.cells;
+        this.win = data.win;
+    }
+
     get(x: number, y: number): number {
         return this.cells[this.index(x, y)];
     }
@@ -47,6 +55,12 @@ export abstract class Board {
             throw new Error('Cell (' + x + ',' + y + ') is already set');
         }
         this.cells[i] = value;
+        this.addMoves(x, y);
+    }
+
+    clear(x: number, y: number) {
+        let i = this.index(x, y);
+        delete this.cells[i];
         this.addMoves(x, y);
     }
 

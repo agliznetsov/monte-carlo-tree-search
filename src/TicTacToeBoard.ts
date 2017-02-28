@@ -3,8 +3,9 @@ import {Board} from "./Board";
 
 export default class TicTacToeBoard extends Board {
 
-    constructor(width = 3, height = 3, winSize = 3) {
-        super(width, height, winSize);
+    constructor() {
+        super();
+        this.resize(15, 15, 5);
     }
 
     init() {
@@ -12,7 +13,8 @@ export default class TicTacToeBoard extends Board {
     }
 
     clone() {
-        let board = new TicTacToeBoard(this.width, this.height, this.winSize);
+        let board = new TicTacToeBoard();
+        board.resize(this.width, this.height, this.winSize);
         board.cells = _.clone(this.cells);
         board.moves = _.clone(this.moves);
         return board;

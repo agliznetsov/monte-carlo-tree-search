@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -35,5 +36,9 @@ module.exports = {
             {from: 'index.html', to: ''}
         ]),
         new ExtractTextPlugin('bundle.css'),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
     ]
 };

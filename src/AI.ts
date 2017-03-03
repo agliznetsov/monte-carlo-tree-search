@@ -47,8 +47,15 @@ export default class AI {
         }
         while (this.node.children && this.node.children.length) {
             this.node.children.forEach(it => it.calculateUCB(this.node.playCount));
-            let sorted = _.orderBy(this.node.children, 'ucb', 'desc');
-            let nextNode: any = sorted[0];
+            //let sorted = _.orderBy(this.node.children, 'ucb', 'desc');
+            let maxUcb = Number.MIN_VALUE;
+            let nextNode;
+            this.node.children.forEach(it => {
+                if (it.ucb > maxUcb) {
+                    maxUcb = it.ucb;
+                    nextNode = it;
+                }
+            });
             this.board.setIndex(nextNode.move, nextNode.player);
             this.node = nextNode;
         }

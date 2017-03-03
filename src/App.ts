@@ -127,31 +127,37 @@ class App {
     }
 
     onTimer(elapsed) {
-        let frameStart = new Date().getTime();
-        while (new Date().getTime() - frameStart < 50) { //20 fps
-            this.ai.step();
-            this.iteration++;
-        }
-        this.aiResult = this.ai.getResult();
-        let time = (new Date().getTime() - this.start) / 1000;
-        this.barChart.refresh(this.aiResult);
-        this.boardView.refresh({move: this.aiResult.moves[0].move, player: this.ai.player});
-        this.lineChart.addDataPoint(this.aiResult.confidence);
-        this.confidences.push(this.aiResult.confidence);
-        let std = this.drawConfidenceLine();
+        try {
+            let frameStart = new Date().getTime();
+            while (new Date().getTime() - frameStart < 50) { //20 fps
+                this.ai.step();
+                this.iteration++;
+            }
+            this.aiResult = this.ai.getResult();
+            let time = (new Date().getTime() - this.start) / 1000;
+            this.barChart.refresh(this.aiResult);
+            this.boardView.refresh({move: this.aiResult.moves[0].move, player: this.ai.player});
+            this.lineChart.addDataPoint(this.aiResult.confidence);
+            this.confidences.push(this.aiResult.confidence);
+            let std = this.drawConfidenceLine();
 
-        $('#iterations').text(this.iteration);
-        $('#confidence').text(this.format(this.aiResult.confidence, 2));
-        $('#time').text(this.format(time, 2));
-        $('#std').text(this.format(std, 4));
+            $('#iterations').text(this.iteration);
+            $('#confidence').text(this.format(this.aiResult.confidence, 2));
+            $('#time').text(this.format(time, 2));
+            $('#std').text(this.format(std, 4));
 
-        let settings = this.getSettings();
-        if (this.stop
-            || (settings.timeout > 0 && elapsed > settings.timeout * 1000)
-            || (settings.confidence > 0 && this.aiResult.confidence > settings.confidence)
-            || (settings.std > 0 && this.iteration > 1000 && std > -1 && std < settings.std)) {
-            let cell = this.board.cell(this.aiResult.moves[0].move);
-            this.makeMove(cell.x, cell.y);
+            let settings = this.getSettings();
+            if (this.stop
+                || (settings.timeout > 0 && elapsed > settings.timeout * 1000)
+                || (settings.confidence > 0 && this.aiResult.confidence > settings.confidence)
+                || (settings.std > 0 && this.iteration > 1000 && std > -1 && std < settings.std)) {
+                console.log('it/sec', this.iteration / time);
+                let cell = this.board.cell(this.aiResult.moves[0].move);
+                this.makeMove(cell.x, cell.y);
+                this.stopTimer();
+            }
+        } catch (e) {
+            console.error(e);
             this.stopTimer();
         }
     }

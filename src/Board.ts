@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import Set from "./Set";
 
 export class Win {
     readonly cells: {[id: string]: number;} = {};
@@ -11,7 +12,7 @@ export class Win {
 }
 
 export abstract class Board {
-    moves: {[id: string]: boolean;} = {};
+    moves = new Set();
     cells: {[id: string]: number;} = {};
     win: Win;
     width: number;
@@ -40,7 +41,8 @@ export abstract class Board {
         this.width = data.width;
         this.height = data.height;
         this.winSize = data.winSize;
-        this.moves = data.moves;
+        this.moves = new Set();
+        this.moves.deserialize(data.moves);
         this.cells = data.cells;
         this.win = data.win;
     }
@@ -69,8 +71,8 @@ export abstract class Board {
         this.set(c.x, c.y, value);
     }
 
-    index(x: number, y: number): string {
-        return String(y * this.width + x);
+    index(x: number, y: number): number {
+        return y * this.width + x;
     }
 
     cell(index: string) {
@@ -93,7 +95,7 @@ export abstract class Board {
     }
 
     getMoves(): string[] {
-        return _.keys(this.moves);
+        return this.moves.getKeys();
     }
 
     findWinnerAt(move: string) {

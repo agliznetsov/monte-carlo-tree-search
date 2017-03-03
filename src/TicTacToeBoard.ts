@@ -9,14 +9,15 @@ export default class TicTacToeBoard extends Board {
     }
 
     init() {
-        this.moves[this.index(Math.floor(this.width / 2), Math.floor(this.height / 2))] = true;
+        let center = this.index(Math.floor(this.width / 2), Math.floor(this.height / 2));
+        this.moves.add(center);
     }
 
     clone() {
         let board = new TicTacToeBoard();
         board.resize(this.width, this.height, this.winSize);
         board.cells = _.clone(this.cells);
-        board.moves = _.clone(this.moves);
+        board.moves = this.moves.clone();
         return board;
     }
 
@@ -35,9 +36,9 @@ export default class TicTacToeBoard extends Board {
             for (let y = y1; y <= y2; y++) {
                 let i = this.index(x, y);
                 if (!this.cells[i]) {
-                    this.moves[i] = true;
+                    this.moves.add(i);
                 } else {
-                    delete this.moves[i];
+                    this.moves.remove(i);
                 }
             }
         }

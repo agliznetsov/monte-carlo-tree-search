@@ -10,14 +10,14 @@ export default class ConnectFourBoard extends Board {
 
     init() {
         for (let x = 0; x < this.width; x++) {
-            this.moves[this.index(x, this.height - 1)] = true;
+            this.moves.add(this.index(x, this.height - 1));
         }
     }
 
     clone() {
         let copy = new ConnectFourBoard();
         copy.cells = _.clone(this.cells);
-        copy.moves = _.clone(this.moves);
+        copy.moves = this.moves.clone();
         return copy;
     }
 
@@ -33,9 +33,9 @@ export default class ConnectFourBoard extends Board {
 
     protected addMoves(x: number, y: number) {
         let index = this.index(x, y);
-        delete this.moves[index];
+        this.moves.remove(index);
         if (y > 0) {
-            this.moves[this.index(x, y - 1)] = true;
+            this.moves.add(this.index(x, y - 1));
         }
     }
 

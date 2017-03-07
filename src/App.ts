@@ -8,7 +8,7 @@ import LineChart from './LineChart';
 import TicTacToeBoard from './TicTacToeBoard';
 import ConnectFourBoard from './ConnectFourBoard';
 import BoardView from './BoardView';
-import AI from './AI';
+import {AI, MTS_AI, MiniMaxAI} from './AI';
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.js";
@@ -25,7 +25,7 @@ class App {
     private player: number;
     private iteration: number;
     private confidences;
-    private ai;
+    private ai: AI;
     private aiSettings;
     private stop;
     private start;
@@ -115,8 +115,12 @@ class App {
         if (!this.timer) {
             this.lineChart.reset();
             this.iteration = 0;
-            this.ai = new AI(this.board, this.player);
+
+            this.ai = new MTS_AI(this.board, this.player);
             this.stop = false;
+            // this.ai = new MiniMaxAI(this.board, this.player);
+            // this.stop = true;
+
             this.start = new Date().getTime();
             this.confidences = [];
             this.timer = d3.timer(this.onTimer.bind(this));

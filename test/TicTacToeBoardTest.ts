@@ -87,4 +87,31 @@ describe('TicTacToeBoard', () => {
         assert.deepEqual({'20': true, '31': true, '42': true}, res.cells);
     });
 
+    it('evaluate', () => {
+        evaluate(".1.", 0);
+        evaluate(".11.", 2);
+        evaluate(".111.", 4);
+        evaluate(".1111.", 8);
+        evaluate(".11111.", 1000000);
+        evaluate(".22222.", -1000000);
+
+        evaluate("11.............", 1);
+        evaluate(".............11", 1);
+
+        evaluate(".112...........", 1);
+        evaluate(".1122..........", 0);
+    });
+
+    function evaluate(str: String, expected: number) {
+        let board = new TicTacToeBoard();
+        for (let i = 0; i < str.length; i++) {
+            let ch = str.charAt(i);
+            if (ch === '1' || ch === '2') {
+                let p = Number(ch);
+                board.set(i, 0, p);
+            }
+        }
+        let actual = board.evaluate();
+        assert.equal(actual, expected);
+    }
 });

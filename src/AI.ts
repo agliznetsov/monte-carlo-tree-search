@@ -1,15 +1,31 @@
 import * as _ from 'lodash';
 import {Board, Win} from "./Board";
+import {platform} from "os";
 let __: any = _; //HACK: to overcome wrong types mapping for lodash
 
-export default class AI {
-    private player: number;
+//Some benchmarks
+//MiniMax 4: 65sec
+//AlphaBeta 4: 35sec
+//AlphaBeta 3: 0.3sec (incorrect play)
+//MonteCarlo: <1sec
+
+export abstract class AI {
+    player: number;
+
+    abstract step();
+
+    abstract getResult();
+}
+
+export class MTS_AI extends AI {
     private originalBoard: Board;
     private node: Node;
     private playCount: number;
     private board: Board;
+    private evaluation: boolean = false;
 
     constructor(board: Board, player: number) {
+        super();
         this.player = player;
         this.originalBoard = board;
         this.node = new Node(null, Board.nextPlayer(player), null);
@@ -47,8 +63,7 @@ export default class AI {
         }
         while (this.node.children && this.node.children.length) {
             this.node.children.forEach(it => it.calculateUCB(this.node.playCount));
-            //let sorted = _.orderBy(this.node.children, 'ucb', 'desc');
-            let maxUcb = Number.MIN_VALUE;
+            let maxUcb = -Number.MAX_VALUE;
             let nextNode;
             this.node.children.forEach(it => {
                 if (it.ucb > maxUcb) {
@@ -56,8 +71,12 @@ export default class AI {
                     nextNode = it;
                 }
             });
-            this.board.setIndex(nextNode.move, nextNode.player);
-            this.node = nextNode;
+            if (nextNode) {
+                this.board.setIndex(nextNode.move, nextNode.player);
+                this.node = nextNode;
+            } else {
+                console.log('error');
+            }
         }
         if (this.node.move !== null) {
             if (this.node.win === null) {
@@ -73,7 +92,19 @@ export default class AI {
             let moves = this.board.getMoves();
             if (moves.length) {
                 let np = Board.nextPlayer(this.node.player);
-                moves.forEach(m => this.node.children.push(new Node(this.node, np, m)));
+                moves.forEach(m => {
+                    let node = new Node(this.node, np, m);
+                    this.node.children.push(node);
+                    if (this.evaluation && this.node.layer === 0) {
+                        let copy = this.board.clone();
+                        copy.setIndex(node.move, np);
+                        node.evaluation = copy.evaluate();
+                        if (np == 2) {
+                            node.evaluation = -node.evaluation;
+                        }
+                        console.log('eval', node.evaluation);
+                    }
+                });
                 let moveIndex = Math.floor(Math.random() * this.node.children.length);
                 let nextNode = this.node.children[moveIndex];
                 this.board.setIndex(nextNode.move, nextNode.player);
@@ -113,29 +144,196 @@ export default class AI {
 
 }
 
+export class MiniMaxAI extends AI {
+    private move: string;
+    private originalBoard: Board;
+
+    constructor(board: Board, player: number) {
+        super();
+        this.player = player;
+        this.originalBoard = board;
+    }
+
+    step() {
+        // this.move = this.miniMax(this.originalBoard, this.player, 4);
+        this.move = this.alphaBeta(this.originalBoard, this.player, 4, -Number.MAX_VALUE, Number.MAX_VALUE);
+    }
+
+    getResult() {
+        return {
+            max: 0,
+            mean: 0,
+            confidence: 0,
+            moves: [this.move]
+        };
+    }
+
+    private miniMax(board: Board, player: number, currentDepth: number) {
+        let successors = board.getMoves();
+        if (currentDepth == 0 || successors.length == 0) {
+            return {value: board.evaluate()};
+        }
+
+        let value = 0;
+        let selectedMove = null;
+        successors.forEach(move => {
+            let copy = board.clone();
+            copy.setIndex(move, player);
+            let mm = this.miniMax(copy, Board.nextPlayer(player), currentDepth - 1);
+            if (selectedMove == null //initial value
+                || (player === 1 && mm.value > value)   //max
+                || (player === 2 && mm.value < value)) { //min
+                value = mm.value;
+                selectedMove = {
+                    move: move,
+                    value: value
+                };
+            }
+        });
+
+        return selectedMove;
+    }
+
+    alphaBeta(board: Board, player: number, currentDepth: number, a: number, b: number) {
+        let successors = board.getMoves();
+        if (currentDepth == 0 || successors.length == 0) {
+            return {value: board.evaluate()};
+        }
+
+        let value: number = null;
+        let selectedMove = null;
+
+        for (let i = 0; i < successors.length; i++) {
+            let move = successors[i];
+            let copy = board.clone();
+            copy.setIndex(move, player);
+            let mm = this.alphaBeta(copy, Board.nextPlayer(player), currentDepth - 1, a, b);
+            if (player == 1) {
+                if (value == null || mm.value > value) {
+                    value = mm.value;
+                    selectedMove = {
+                        move: move,
+                        value: value
+                    };
+                }
+                a = Math.max(a, value);
+                if (b <= a) {
+                    break;
+                }
+            } else {
+                if (value == null || mm.value < value) {
+                    value = mm.value;
+                    selectedMove = {
+                        move: move,
+                        value: value
+                    };
+                }
+                b = Math.min(b, value);
+                if (b <= a) {
+                    break;
+                }
+            }
+        }
+        return selectedMove;
+    }
+
+    alphaBetaSorted(board: Board, player: number, currentDepth: number, a: number, b: number, v: number) {
+        let successors = board.getMoves();
+        if (currentDepth == 0 || successors.length == 0) {
+            return null;
+        }
+        if (Math.abs(v) > 1000) {
+            return null;
+        }
+
+        let value: number = null;
+        let selectedMove = null;
+
+        let nodes = [];
+        for (let i = 0; i < successors.length; i++) {
+            let move = successors[i];
+            let copy = board.clone();
+            copy.setIndex(move, player);
+            let value = board.evaluate();
+            nodes.push({
+                board: copy,
+                move: move,
+                value: value,
+                order: player === 1 ? -value : value
+            });
+        }
+        _.sortBy(nodes, "order");
+
+        for (let i = 0; i < nodes.length; i++) {
+            let move = nodes[i].move;
+            let mm = this.alphaBetaSorted(nodes[i].board, Board.nextPlayer(player), currentDepth - 1, a, b, nodes[i].value);
+            if (mm === null) {
+                mm = {value: nodes[i].value};
+            }
+            if (player == 1) {
+                if (value == null || mm.value > value) {
+                    value = mm.value;
+                    selectedMove = {
+                        move: move,
+                        value: value
+                    };
+                }
+                a = Math.max(a, value);
+                if (b <= a) {
+                    break;
+                }
+            } else {
+                if (value == null || mm.value < value) {
+                    value = mm.value;
+                    selectedMove = {
+                        move: move,
+                        value: value
+                    };
+                }
+                b = Math.min(b, value);
+                if (b <= a) {
+                    break;
+                }
+            }
+        }
+        return selectedMove;
+    }
+
+}
+
 class Node {
     public win: Win = null;
-    public parent;
-    public player;
+    public parent: Node;
+    public player: number;
     public move;
     public children = null;
-    public playCount = 0;
-    public winCount = 0;
-    public ucb;
+    public playCount: number = 0;
+    public winCount: number = 0;
+    public ucb: number;
+    public evaluation: number = 0;
+    public layer: number;
 
     constructor(parent: Node, player: number, move: string) {
         this.parent = parent;
         this.player = player;
         this.move = move;
+        this.layer = parent ? parent.layer + 1 : 0;
     }
 
     calculateUCB(total) {
         const C = 1.4;
+        let value;
+        let exploration;
+        let evaluation;
         if (this.playCount === 0) {
-            this.ucb = Number.MAX_VALUE;
+            value = 0;
+            exploration = 1000000;
+            evaluation = this.evaluation * 5;
         } else {
-            let tmp = (C * Math.sqrt(Math.log(total) / this.playCount));
-            this.ucb = this.winCount / this.playCount + tmp;
+            exploration = (C * Math.sqrt(Math.log(total) / this.playCount));
+            value = this.winCount / this.playCount;
+            evaluation = this.evaluation * 5 / this.playCount;
         }
+        this.ucb = value + evaluation + exploration;
     }
 }

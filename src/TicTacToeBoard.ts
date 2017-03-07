@@ -55,4 +55,92 @@ export default class TicTacToeBoard extends Board {
         return moves;
     }
 
+
+    evaluate(): number {
+        let value = 0;
+
+        for (let y = 0; y < this.height; y++) {
+            value += this.evaluateRow(0, y, 1, 0);
+        }
+
+        for (let x = 0; x < this.width; x++) {
+            value += this.evaluateRow(x, 0, 0, 1);
+        }
+
+        for (let y = 0; y < this.height; y++) {
+            value += this.evaluateRow(0, y, 1, -1);
+        }
+        for (let x = 1; x < this.width; x++) {
+            value += this.evaluateRow(x, this.height - 1, 1, -1);
+        }
+
+        for (let y = 0; y < this.height; y++) {
+            value += this.evaluateRow(0, y, 1, 1);
+        }
+        for (let x = 1; x < this.width; x++) {
+            value += this.evaluateRow(x, 0, 1, 1);
+        }
+
+        return value;
+    }
+
+    private evaluateRow(x: number, y: number, dx: number, dy: number): number {
+        let value = 0;
+        let left = this.get(x - dx, y - dy);
+        let player = undefined;
+        let length = 1;
+        while (true) {
+            let current = this.get(x, y);
+            if (current && current === player) {
+                length++;
+            } else {
+                if (length > 1) {
+                    value += this.evaluateSequence(player, length, left, current);
+                    player = current;
+                    length = 1;
+                    left = this.get(x - dx, y - dy);
+                } else if (current) {
+                    player = current;
+                    length = 1;
+                    left = this.get(x - dx, y - dy);
+                }
+            }
+            x += dx;
+            y += dy;
+            if (x < 0 || x >= this.width || y < 0 || y >= this.height) {
+                if (length > 1) {
+                    value += this.evaluateSequence(player, length, left, current);
+                }
+                break;
+            }
+        }
+        return value;
+    }
+
+    private evaluateSequence(player, length, left, right): number {
+        let res = 0;
+        if (length >= 5) {
+            res = 1000000;
+        } else if (length === 4) {
+            if (left === undefined && right === undefined) {
+                res = 8;
+            } else if (left === undefined || right === undefined) {
+                res = 4;
+            }
+        } else if (length === 3) {
+            if (left === undefined && right === undefined) {
+                res = 4;
+            } else if (left === undefined || right === undefined) {
+                res = 2;
+            }
+        } else if (length === 2) {
+            if (left === undefined && right === undefined) {
+                res = 2;
+            } else if (left === undefined || right === undefined) {
+                res = 1;
+            }
+        }
+        return player == 1 ? res : -res;
+    }
+
 }

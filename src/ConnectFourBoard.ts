@@ -39,4 +39,8 @@ export default class ConnectFourBoard extends Board {
         }
     }
 
+    evaluate(): number {
+        return 0;
+    }
+
 }

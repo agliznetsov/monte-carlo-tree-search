@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import Set from "./Set";
 
 export class Win {
@@ -31,6 +30,8 @@ export abstract class Board {
 
     protected abstract addMoves(x: number, y: number);
 
+    abstract evaluate(): number;
+
     resize(width: number, height: number, winSize: number) {
         this.width = width;
         this.height = height;
@@ -48,7 +49,11 @@ export abstract class Board {
     }
 
     get(x: number, y: number): number {
-        return this.cells[this.index(x, y)];
+        if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
+            return -1;
+        } else {
+            return this.cells[this.index(x, y)];
+        }
     }
 
     set(x: number, y: number, value: number) {

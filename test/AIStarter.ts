@@ -1,6 +1,6 @@
 import ConnectFourBoard from '../src/ConnectFourBoard';
-import AI from '../src/AI';
 import {Board} from "../src/Board";
+import {MTS_AI} from "../src/AI";
 
 
 describe('AI', () => {
@@ -56,7 +56,7 @@ function playGame() {
 
 function analyze(board, player, move) {
     let iteration = 0;
-    let ai = new AI(board, player);
+    let ai = new MTS_AI(board, player);
     let start = new Date().getTime();
     while (true) {
         for (let i = 0; i < 100; i++) {

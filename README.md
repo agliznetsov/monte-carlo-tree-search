@@ -1,9 +1,11 @@
 Monte Carlo Tree Search
 =================
 
-[MCTS](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) is typically used to power games AI. This project implements the algorithm and provides a demo playground.
+[MCTS](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search) is typically used to power games AI. This project implements the algorithm and provides a demo playground for two board games: Connect Four and Tic-Tac-Toe.
 
-## Run
+Live demo is available at [RawGit](https://rawgit.com/agliznetsov/monte-carlo-tree-search/master/dist/index.html) 
+
+## Develop
 
 ```
 npm install
@@ -16,3 +18,8 @@ npm start
 npm test
 ```
 
+## Build
+
+```
+npm run build
+```

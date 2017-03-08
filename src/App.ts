@@ -33,14 +33,14 @@ class App {
 
     private readonly aiSettingsDefault = {
         c: {
-            timeout: 10,
-            confidence: 1,
-            std: 0.02
+            timeout: 2,
+            confidence: 1.5,
+            iterations: 15000
         },
         t: {
-            timeout: 30,
-            confidence: 3,
-            std: 0.01
+            timeout: 3,
+            confidence: 2,
+            iterations: 15000
         }
     };
 
@@ -142,20 +142,18 @@ class App {
             this.barChart.refresh(this.aiResult);
             this.boardView.refresh({move: this.aiResult.moves[0].move, player: this.ai.player});
             this.lineChart.addDataPoint(this.aiResult.confidence);
-            this.confidences.push(this.aiResult.confidence);
-            let std = this.drawConfidenceLine();
 
             $('#iterations').text(this.iteration);
             $('#confidence').text(this.format(this.aiResult.confidence, 2));
             $('#time').text(this.format(time, 2));
-            $('#std').text(this.format(std, 4));
 
             let settings = this.getSettings();
             if (this.stop
-                || (settings.timeout > 0 && elapsed > settings.timeout * 1000)
-                || (settings.confidence > 0 && this.aiResult.confidence > settings.confidence)
-                || (settings.std > 0 && this.iteration > 1000 && std > -1 && std < settings.std)) {
-                console.log('it/sec', this.iteration / time);
+                || (this.aiResult.moves.length === 1)
+                || (settings.timeout > 0 && elapsed >= settings.timeout * 1000)
+                || (settings.confidence > 0 && this.aiResult.confidence >= settings.confidence)
+                || (settings.iterations > 0 && this.iteration >= settings.iterations)) {
+                // console.log('it/sec', this.iteration / time);
                 let cell = this.board.cell(this.aiResult.moves[0].move);
                 this.makeMove(cell.x, cell.y);
                 this.stopTimer();
@@ -176,18 +174,6 @@ class App {
 
     format(value: number, digits: number) {
         return value.toFixed(digits);
-    }
-
-    drawConfidenceLine() {
-        if (this.confidences.length >= 20) {
-            let arr = this.confidences.slice(this.confidences.length - 20, -1);
-            let mean = _.mean(arr);
-            let variance = _.sumBy(arr, (it: any) => Math.pow(it - mean, 2)) / arr.length;
-            let std = Math.sqrt(variance);
-            return std;
-        } else {
-            return -1;
-        }
     }
 
     refresh() {
@@ -271,7 +257,7 @@ class App {
         let settings = this.getSettings();
         $('#form-timeout').val(settings.timeout);
         $('#form-confidence').val(settings.confidence);
-        $('#form-std').val(settings.std);
+        $('#form-iterations').val(settings.iterations);
         $('#config-dialog').modal();
     }
 
@@ -279,7 +265,7 @@ class App {
         let settings = this.getSettings();
         settings.timeout = $('#form-timeout').val();
         settings.confidence = $('#form-confidence').val();
-        settings.std = $('#form-std').val();
+        settings.iterations = $('#form-iterations').val();
         window.localStorage.setItem("aiSettings", JSON.stringify(this.aiSettings));
         $('#config-dialog').modal('hide');
     }
@@ -289,7 +275,7 @@ class App {
         let settings = this.aiSettingsDefault[game];
         $('#form-timeout').val(settings.timeout);
         $('#form-confidence').val(settings.confidence);
-        $('#form-std').val(settings.std);
+        $('#form-iterations').val(settings.iterations);
     }
 
 }

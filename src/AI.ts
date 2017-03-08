@@ -3,11 +3,11 @@ import {Board, Win} from "./Board";
 import {platform} from "os";
 let __: any = _; //HACK: to overcome wrong types mapping for lodash
 
-//Some benchmarks
-//MiniMax 4: 65sec
-//AlphaBeta 4: 35sec
-//AlphaBeta 3: 0.3sec (incorrect play)
-//MonteCarlo: <1sec
+//Some benchmarks:
+//MiniMax 4: 65sec, 2'314'284 evaluations
+//AlphaBeta 4: 35sec, 1'163'857 evaluations
+//AlphaBeta 3: 0.3sec, 8'365 evaluations
+//MonteCarlo: <1sec, ~6500 playouts
 
 export abstract class AI {
     player: number;
@@ -147,16 +147,20 @@ export class MTS_AI extends AI {
 export class MiniMaxAI extends AI {
     private move: string;
     private originalBoard: Board;
+    private counter = 0;
+    private depth: number;
 
-    constructor(board: Board, player: number) {
+    constructor(board: Board, player: number, depth: number) {
         super();
         this.player = player;
         this.originalBoard = board;
+        this.depth = depth;
     }
 
     step() {
-        // this.move = this.miniMax(this.originalBoard, this.player, 4);
-        this.move = this.alphaBeta(this.originalBoard, this.player, 4, -Number.MAX_VALUE, Number.MAX_VALUE);
+        this.move = this.miniMax(this.originalBoard, this.player, this.depth);
+        // this.move = this.alphaBeta(this.originalBoard, this.player, this.depth, -Number.MAX_VALUE, Number.MAX_VALUE);
+        console.log('evaluations #', this.counter);
     }
 
     getResult() {
@@ -171,10 +175,11 @@ export class MiniMaxAI extends AI {
     private miniMax(board: Board, player: number, currentDepth: number) {
         let successors = board.getMoves();
         if (currentDepth == 0 || successors.length == 0) {
+            this.counter++;
             return {value: board.evaluate()};
         }
 
-        let value = 0;
+        let value = null;
         let selectedMove = null;
         successors.forEach(move => {
             let copy = board.clone();
@@ -183,11 +188,11 @@ export class MiniMaxAI extends AI {
             if (selectedMove == null //initial value
                 || (player === 1 && mm.value > value)   //max
                 || (player === 2 && mm.value < value)) { //min
-                value = mm.value;
                 selectedMove = {
                     move: move,
                     value: value
                 };
+                value = mm.value;
             }
         });
 
@@ -197,6 +202,7 @@ export class MiniMaxAI extends AI {
     alphaBeta(board: Board, player: number, currentDepth: number, a: number, b: number) {
         let successors = board.getMoves();
         if (currentDepth == 0 || successors.length == 0) {
+            this.counter++;
             return {value: board.evaluate()};
         }
 
@@ -208,68 +214,6 @@ export class MiniMaxAI extends AI {
             let copy = board.clone();
             copy.setIndex(move, player);
             let mm = this.alphaBeta(copy, Board.nextPlayer(player), currentDepth - 1, a, b);
-            if (player == 1) {
-                if (value == null || mm.value > value) {
-                    value = mm.value;
-                    selectedMove = {
-                        move: move,
-                        value: value
-                    };
-                }
-                a = Math.max(a, value);
-                if (b <= a) {
-                    break;
-                }
-            } else {
-                if (value == null || mm.value < value) {
-                    value = mm.value;
-                    selectedMove = {
-                        move: move,
-                        value: value
-                    };
-                }
-                b = Math.min(b, value);
-                if (b <= a) {
-                    break;
-                }
-            }
-        }
-        return selectedMove;
-    }
-
-    alphaBetaSorted(board: Board, player: number, currentDepth: number, a: number, b: number, v: number) {
-        let successors = board.getMoves();
-        if (currentDepth == 0 || successors.length == 0) {
-            return null;
-        }
-        if (Math.abs(v) > 1000) {
-            return null;
-        }
-
-        let value: number = null;
-        let selectedMove = null;
-
-        let nodes = [];
-        for (let i = 0; i < successors.length; i++) {
-            let move = successors[i];
-            let copy = board.clone();
-            copy.setIndex(move, player);
-            let value = board.evaluate();
-            nodes.push({
-                board: copy,
-                move: move,
-                value: value,
-                order: player === 1 ? -value : value
-            });
-        }
-        _.sortBy(nodes, "order");
-
-        for (let i = 0; i < nodes.length; i++) {
-            let move = nodes[i].move;
-            let mm = this.alphaBetaSorted(nodes[i].board, Board.nextPlayer(player), currentDepth - 1, a, b, nodes[i].value);
-            if (mm === null) {
-                mm = {value: nodes[i].value};
-            }
             if (player == 1) {
                 if (value == null || mm.value > value) {
                     value = mm.value;

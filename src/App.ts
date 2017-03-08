@@ -13,7 +13,7 @@ import {AI, MTS_AI, MiniMaxAI} from './AI';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap/dist/js/bootstrap.js";
 import "../node_modules/font-awesome/css/font-awesome.min.css";
-import "../css/main.css";
+import "../main.css";
 import {Board} from "./Board";
 
 class App {

@@ -17,12 +17,11 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                // use: ['style-loader', 'css-loader']
                 use: ExtractTextPlugin.extract({use: 'css-loader'})
             },
             {
                 test: /\.(woff|woff2|ttf|eot|svg)(.*)?$/,
-                loader: 'file-loader?name=fonts/[name].[ext]&publicPath=../'
+                loader: 'file-loader?name=fonts/[name].[ext]'
             }
         ]
     },

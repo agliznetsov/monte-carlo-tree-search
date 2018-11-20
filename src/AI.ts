@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {Board, Win} from "./Board";
-import {platform} from "os";
 let __: any = _; //HACK: to overcome wrong types mapping for lodash
 
 //Some benchmarks:

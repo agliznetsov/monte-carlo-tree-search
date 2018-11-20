@@ -1,6 +1,6 @@
-var webpack = require('webpack');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     entry: './src/App.js',
@@ -17,7 +17,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({use: 'css-loader'})
+                use: [{loader: MiniCssExtractPlugin.loader}, "css-loader"]
             },
             {
                 test: /\.(woff|woff2|ttf|eot|svg)(.*)?$/,
@@ -34,7 +34,9 @@ module.exports = {
             {from: 'img', to: 'img'},
             {from: 'index.html', to: ''}
         ]),
-        new ExtractTextPlugin('bundle.css'),
+        new MiniCssExtractPlugin({
+            filename: 'bundle.css',
+        }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery'

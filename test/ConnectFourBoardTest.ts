@@ -14,7 +14,6 @@ describe('ConnectFourBoard', () => {
         board.set(3, 5, 1);
         moves = board.getMoves();
         assert.equal(moves.length, 7);
-        assert.equal(moves[0], "31");
     });
 
 });

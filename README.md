@@ -8,7 +8,6 @@ Live demo is available at [GitHub Pages](http://agliznetsov.github.io/monte-carl
 ## Develop
 
 ```
-npm install -g typescript
 npm install
 npm start
 ```

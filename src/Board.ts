@@ -103,6 +103,12 @@ export abstract class Board {
         return this.moves.getKeys();
     }
 
+    randomMove(): string {
+        let keys = this.moves.getKeys();
+        let moveIndex = Math.floor(Math.random() * keys.length);
+        return keys[moveIndex];
+    }
+
     findWinnerAt(move: string) {
         let c = this.cell(move);
         return this.findWinner(c.x, c.y);

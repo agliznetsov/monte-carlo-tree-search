@@ -1,4 +1,5 @@
 import ConnectFourBoard from '../src/ConnectFourBoard';
+import TicTacToeBoard from '../src/TicTacToeBoard';
 import {Board} from "../src/Board";
 import {MTS_AI} from "../src/AI";
 
@@ -6,28 +7,40 @@ import {MTS_AI} from "../src/AI";
 describe('AI', () => {
 
     it('playConnectFour', () => {
-        let p1 = 0;
-        let p2 = 0;
-        let tie = 0;
-        for (let i = 0; i < 100; i++) {
-            let win = playGame();
-            if (win === 1) {
-                p1++;
-            } else if (win === 2) {
-                p2++;
-            } else {
-                tie++;
-            }
-            console.log('p1', p1, 'p2', p2, 'ties', tie);
-        }
+        playEpoch(() => new ConnectFourBoard());
+    });
+
+    it('playTTC', () => {
+        playEpoch(() => {
+            let board = new TicTacToeBoard();
+            board.resize(3,3,3);
+            return board;
+        }, 10, 100);
     });
 
 });
 
-function playGame() {
+function playEpoch(createBoard, games = 100, maxIterations = null) {
+    let p1 = 0;
+    let p2 = 0;
+    let tie = 0;
+    for (let i = 0; i < games; i++) {
+        let win = playGame(createBoard, maxIterations);
+        if (win === 1) {
+            p1++;
+        } else if (win === 2) {
+            p2++;
+        } else {
+            tie++;
+        }
+        console.log('p1', p1, 'p2', p2, 'ties', tie);
+    }
+}
+
+function playGame(createBoard, maxIterations) {
     let start = new Date().getTime();
     let player = 1;
-    let board = new ConnectFourBoard();
+    let board = createBoard();
     board.init();
     let iteration = 1;
     let win = null;
@@ -40,7 +53,12 @@ function playGame() {
             break;
         } else {
             iteration++;
-            let move = analyze(board, player, iteration);
+            let move;
+            if (player === 1) {
+                move = analyze(board, player, iteration, maxIterations);
+            } else {
+                move = board.randomMove();
+            }
             let cell = board.cell(move);
             board.set(cell.x, cell.y, player);
             win = board.findWinner(cell.x, cell.y);
@@ -51,10 +69,10 @@ function playGame() {
     board.print();
     console.log('Game time', elapsed / 1000, 'moves', iteration);
 
-    return win.player;
+    return win ? win.player : null;
 }
 
-function analyze(board, player, move) {
+function analyze(board, player, move, maxIterations, debug = false) {
     let iteration = 0;
     let ai = new MTS_AI(board, player);
     let start = new Date().getTime();
@@ -68,8 +86,10 @@ function analyze(board, player, move) {
         let confidence = Math.round(aiResult.confidence * 100) / 100;
 
         let elapsed = new Date().getTime() - start;
-        if (elapsed > 5000 || (aiResult.confidence > 2 && iteration > 1000)) {
-            console.log('#', move, 'Elapsed', elapsed / 1000, 'Confidence', confidence, 'Iterations', iteration);
+        if (elapsed > 5000 || (aiResult.confidence > 2 && iteration > 1000) || (maxIterations && iteration >= maxIterations)) {
+            if (debug) {
+                console.log('#', move, 'Elapsed', elapsed / 1000, 'Confidence', confidence, 'Iterations', iteration);
+            }
             return aiResult.moves[0].move;
         }
     }

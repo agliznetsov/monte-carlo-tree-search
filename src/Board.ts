@@ -99,6 +99,17 @@ export abstract class Board {
         }
     }
 
+    csvLine() {
+        let values = [];
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let value = this.get(x, y);
+                values.push(value ? value : '0');
+            }
+        }
+        return values.join(',');
+    }
+
     getMoves(): string[] {
         return this.moves.getKeys();
     }
